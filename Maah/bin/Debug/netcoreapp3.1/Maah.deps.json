@@ -1,0 +1,63 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "Maah/1.0.0": {
+        "dependencies": {
+          "POSH": "1.0.0",
+          "POSH.core": "1.0.0"
+        },
+        "runtime": {
+          "Maah.dll": {}
+        }
+      },
+      "POSH/1.0.0": {
+        "dependencies": {
+          "POSH.core": "1.0.0"
+        },
+        "runtime": {
+          "POSH-sharp.exe": {}
+        }
+      },
+      "POSH.core/1.0.0": {
+        "runtime": {
+          "POSH-core.dll": {}
+        }
+      },
+      "log4net/1.2.11.0": {
+        "runtime": {
+          "log4net.dll": {
+            "assemblyVersion": "1.2.11.0",
+            "fileVersion": "1.2.11.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Maah/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "POSH/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "POSH.core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "log4net/1.2.11.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

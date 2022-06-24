@@ -34,12 +34,12 @@ namespace MaahBase
         
         // loop thread control
 
-        public List<POSH.sys.Tuple<string,string>> CreateAgents(string plan)
-        {
-            AgentBase[] agents = null;
-            agents = application.control.CreateAgents(verbose, assembly, agentsInit, setting);
-            agents.LoadPlan(plan);
-        }
+        //public List<POSH.sys.Tuple<string,string>> CreateAgents(string plan)
+       // {
+           //AgentBase[] agents = null;
+            //agents = application.control.CreateAgents(verbose, assembly, agentsInit, setting);
+           // agents.LoadPlan(plan);
+     //   }
         
     }
     

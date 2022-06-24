@@ -111,7 +111,7 @@ namespace POSH.sys
             }else
                 logDomain = id+"."+logName;
 #if LOG_ON
-            log = LogManager.GetLogger(logDomain);
+            //log = LogManager.GetLogger(logDomain);
 #else
             log = new Log();
 #endif

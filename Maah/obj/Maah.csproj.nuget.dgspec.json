@@ -1,14 +1,14 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\Maah\\Maah.csproj": {}
+    "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\Maah\\Maah.csproj": {}
   },
   "projects": {
-    "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\core\\POSH.core.csproj": {
+    "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\core\\POSH.core.csproj": {
       "restore": {
-        "projectUniqueName": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\core\\POSH.core.csproj",
+        "projectUniqueName": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\core\\POSH.core.csproj",
         "projectName": "POSH.core",
-        "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\core\\POSH.core.csproj",
+        "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\core\\POSH.core.csproj",
         "frameworks": {
           "net35": {
             "projectReferences": {}
@@ -19,16 +19,16 @@
         "net35": {}
       }
     },
-    "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\execute\\POSH.csproj": {
+    "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\execute\\POSH.csproj": {
       "restore": {
-        "projectUniqueName": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\execute\\POSH.csproj",
+        "projectUniqueName": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\execute\\POSH.csproj",
         "projectName": "POSH",
-        "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\execute\\POSH.csproj",
+        "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\execute\\POSH.csproj",
         "frameworks": {
           "net35": {
             "projectReferences": {
-              "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\core\\POSH.core.csproj": {
-                "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\core\\POSH.core.csproj"
+              "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\core\\POSH.core.csproj": {
+                "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\core\\POSH.core.csproj"
               }
             }
           }
@@ -38,14 +38,14 @@
         "net35": {}
       }
     },
-    "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\Maah\\Maah.csproj": {
+    "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\Maah\\Maah.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\Maah\\Maah.csproj",
+        "projectUniqueName": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\Maah\\Maah.csproj",
         "projectName": "Maah",
-        "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\Maah\\Maah.csproj",
+        "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\Maah\\Maah.csproj",
         "packagesPath": "C:\\Users\\11587\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\Maah\\obj\\",
+        "outputPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\Maah\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\11587\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -62,11 +62,11 @@
           "netcoreapp3.1": {
             "targetAlias": "netcoreapp3.1",
             "projectReferences": {
-              "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\core\\POSH.core.csproj": {
-                "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\core\\POSH.core.csproj"
+              "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\core\\POSH.core.csproj": {
+                "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\core\\POSH.core.csproj"
               },
-              "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\execute\\POSH.csproj": {
-                "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Mahh\\POSH\\posh-sharp-master\\execute\\POSH.csproj"
+              "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\execute\\POSH.csproj": {
+                "projectPath": "C:\\Users\\11587\\OneDrive - University of Edinburgh\\Maah\\POSH\\posh-sharp-master\\execute\\POSH.csproj"
               }
             }
           }

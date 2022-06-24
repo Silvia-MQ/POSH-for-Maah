@@ -46,6 +46,12 @@ namespace POSH.sys
         //                'SDC' : StrictAgent, 
         //                'SRDC' : StrictAgent }
 
+        public static Type OVERRIDE(PLANTYPE type)
+        {
+            Type a = AGENTTYPE.getType(type);
+
+            return a;
+        }
 
         /// <summary>
         /// Returns the type of the plan of the given plan file.
@@ -146,7 +152,7 @@ namespace POSH.sys
                     throw new KeyNotFoundException(string.Format("plan type of plan {0} not recognised", agentPlan));
                 Type agentType = AGENTTYPE.getType(planType);
                 // create agent and append to sequence
-
+                Console.Out.Write("agent type from plans {0}", agentType);
                 Type[] constructorTypes = new Type[4];
                 constructorTypes[0] = assemblyName.GetType();
                 constructorTypes[1] = agentPlan.GetType();
@@ -154,7 +160,10 @@ namespace POSH.sys
                 constructorTypes[3] = (world != null) ? world.GetType() : typeof(World);
 
                 System.Reflection.ConstructorInfo constructor = agentType.GetConstructor(constructorTypes);
-                agents.Add((AgentBase)constructor.Invoke(new object[] {assemblyName, agentPlan, agentAttributes, world}));
+                //agents.Add((AgentBase)constructor.Invoke(new object[] {assemblyName, agentPlan, agentAttributes, world}));
+                //agents.Add(new AgentBase(assemblyName, agentPlan, agentAttributes, world));
+                agents.Add(new Agent(assemblyName, agentPlan, agentAttributes, world));
+
             }
             return agents.ToArray();
         }

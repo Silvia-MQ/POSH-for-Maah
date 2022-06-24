@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POSHBot", "POSHBot\POSHBot.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maah", "Maah\Maah.csproj", "{5880E350-B1C9-4D62-A1FF-A8C092E968E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{9ECC056E-A2CA-4691-891F-83EFF5954021}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Release|x86.ActiveCfg = Release|Any CPU
 		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Release|x86.Build.0 = Release|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|x86.Build.0 = Debug|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|x86.ActiveCfg = Release|Any CPU
+		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

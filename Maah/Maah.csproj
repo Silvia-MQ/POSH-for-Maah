@@ -16,4 +16,8 @@
     <ProjectReference Include="..\execute\POSH.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="events\" />
+  </ItemGroup>
+
 </Project>

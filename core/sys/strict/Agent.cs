@@ -25,7 +25,9 @@ namespace POSH.sys.strict
 
         protected internal DriveCollection dc;
 
-		public Agent(string library, string plan, Dictionary<Tuple<string,string>,object> attributes)
+        //private List<ITCPserver.ITCPserver> iTCPservers;
+
+        public Agent(string library, string plan, Dictionary<Tuple<string,string>,object> attributes)
 			: this(library,plan,attributes,null)
 		{}
 
@@ -193,6 +195,7 @@ namespace POSH.sys.strict
             // read plan, parse it and build drive collection
  	        PlanBuilder builder = new LAPParser().Parse(AssemblyControl.GetControl().GetPlanFile(library, planName));
             dc = builder.build(this);
+            Console.Out.WriteLine("after overridden");
         }
 
         public void LoadPlanWrapper(string planName)

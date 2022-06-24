@@ -176,6 +176,7 @@ namespace POSH.sys
             return result.ToArray();
         }
 
+
         /// <summary>
         /// Returns the plan file name for the given library and plan
         /// </summary>
@@ -207,7 +208,7 @@ namespace POSH.sys
                 // TODO: @swen: some clever log or comment here!!!
             }
             string planResult = new StreamReader(File.OpenRead(result)).ReadToEnd();
-            
+            Console.Out.WriteLine("length of plan file {0}", planResult.Length);
             return planResult;
         }
 
@@ -322,7 +323,7 @@ namespace POSH.sys
             foreach(Type t in a.GetTypes())
                 if (t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(POSH.sys.Behaviour)) && (this.worldScript == null || t.Name != this.worldScript.Second))
                 {
-                    log.Info(String.Format("Creating instance of behaviour {0}.", t));
+                    //log.Info(String.Format("Creating instance of behaviour {0}.", t));
                     ConstructorInfo behaviourConstruct = t.GetConstructor(types);
                     object[] para = new object[1] { agent };
                     log.Debug("Registering behaviour in behaviour dictionary");

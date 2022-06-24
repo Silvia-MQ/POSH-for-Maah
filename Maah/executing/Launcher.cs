@@ -8,6 +8,7 @@ using System.Threading;
 using POSH.sys;
 using System.Reflection;
 using MaahBase;
+using static POSH.sys.AgentFactory;
 
 #if LOG_ON
     using log4net;
@@ -48,8 +49,8 @@ namespace POSH.executing
              launcher [OPTIONS] -v -p = library
 
          Description:
-             Launches a POSH agent by fist initialising the world and then the
-             agents. The specified library is the behaviour library that will be used.
+             Launches a POSH agent by initialising the agents. 
+             The specified library is the behaviour library that will be used.
 
              -h, --help
                  print this help message.
@@ -66,7 +67,6 @@ namespace POSH.executing
                 the plan without the path needs to be given, as it is assumed to have
                 the ending '.lap' and reside in the default location in the
                 corresponding behaviour library.         
-
              ";
 
         internal AssemblyControl control;
@@ -134,15 +134,25 @@ namespace POSH.executing
         /// </summary>
         /// <returns></returns>
         //protected POSH.sys.Tuple<TCP, bool> InitTCP(string worldArgs, string assembly, List<POSH.sys.Tuple<string, object>> agentsInit, bool verbose, Type world)
-       // {
-       //     return new POSH.sys.Tuple<TCP, bool>(null, false);
-       // }
+        // {
+        //     return new POSH.sys.Tuple<TCP, bool>(null, false);
+        // }
+        //static List<ITCPserver.ITCPserver> ITCP;
 
-
-
+        
+         
 
         public static void Main(string[] args)
         {
+            //ITCP = new List<ITCPserver.ITCPserver>();
+
+
+            ITCPserver.ITCPserver.InitTCP();
+            string _behaviour = ITCPserver.ITCPserver.getBehaviour();
+            Console.Out.WriteLine("Behaviour tree: {0}", _behaviour);
+            //for (int i=0; i<20; ++i)
+            //    Console.Out.WriteLine("Behaviour tree: {0}", _behaviour[i]);
+
 
             bool help = false, verbose = false;
             string plan = "";
@@ -174,12 +184,36 @@ namespace POSH.executing
             verbose = arguments.Second;
             plan = arguments.Third;
 
+            
 
             if (verbose)
-                Console.Out.WriteLine("- Laoding behaviour plans for Maah");
+                Console.Out.WriteLine("- Loading behaviour plans for Maah");
+
+
+            string[] plans = { };
+
+            //if (Directory.Exists("plans"))
+                //plans = Directory.GetFiles("library"+ Path.DirectorySeparatorChar+"plans", "*", SearchOption.AllDirectories);
+
+            plans = Directory.GetFiles("library" + Path.DirectorySeparatorChar + "plans", "*", SearchOption.AllDirectories);
+
+            string T = new StreamReader(File.OpenRead(plans[0])).ReadToEnd();
+
+            //PLANTYPE planType = getPlanType();
+            //PLANTYPE type = getPlanType(T);
+            //Type agentType = OVERRIDE(type);
+            //string tt = getType(type);
+
+            //Console.Out.WriteLine("plan = {0}", plan);
+            //plan = "library" + Path.DirectorySeparatorChar + "plans"+ Path.DirectorySeparatorChar + plan + ".lap";
+            //Console.Out.WriteLine("plan = {0}", plan);
+            Console.Out.WriteLine("- Creating agent");
+            agents = AgentFactory.CreateAgents("", plan, null, null);
+            Console.Out.WriteLine("plan type +{0}", agents);// Type.GetType(agentType) );
+            Console.ReadKey();
 
             //POSH.sys.strict.Agent[] agents = null;
-            agents = application.control.CreateAgents(verbose, "", null, null);
+            //agents = application.control.CreateAgents(verbose, "", null, null);
             //agents = MaahBase.CreateAgents(verbose, plan); 
 
             if (agents == null)
@@ -190,11 +224,6 @@ namespace POSH.executing
             loopsRunning = application.control.Running(verbose, agents, loopsRunning);
 
         }
-
-
-
-
-
 
     }
 }

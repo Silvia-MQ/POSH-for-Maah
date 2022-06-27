@@ -146,14 +146,14 @@ namespace POSH.executing
         {
             //ITCP = new List<ITCPserver.ITCPserver>();
 
-
+            /*
             ITCPserver.ITCPserver.InitTCP();
             string _behaviour = ITCPserver.ITCPserver.getBehaviour();
             Console.Out.WriteLine("Behaviour tree: {0}", _behaviour);
             //for (int i=0; i<20; ++i)
             //    Console.Out.WriteLine("Behaviour tree: {0}", _behaviour[i]);
 
-
+            */
             bool help = false, verbose = false;
             string plan = "";
 
@@ -208,7 +208,7 @@ namespace POSH.executing
             //plan = "library" + Path.DirectorySeparatorChar + "plans"+ Path.DirectorySeparatorChar + plan + ".lap";
             //Console.Out.WriteLine("plan = {0}", plan);
             Console.Out.WriteLine("- Creating agent");
-            agents = AgentFactory.CreateAgents("", plan, null, null);
+            agents = AgentFactory.CreateAgents("POSHBot.dll", plan, null, null);//POSHBot.dll
             Console.Out.WriteLine("plan type +{0}", agents);// Type.GetType(agentType) );
             Console.ReadKey();
 

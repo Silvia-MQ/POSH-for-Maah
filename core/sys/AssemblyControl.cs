@@ -7,9 +7,10 @@ using System.Reflection;
 using System.IO;
 using POSH.sys.exceptions;
 using System.Threading;
+using POSH.sys.parse;
 
 #if LOG_ON
-    using log4net;
+using log4net;
 #else
     using POSH.sys;
 #endif
@@ -291,6 +292,39 @@ namespace POSH.sys
 			return GetBehaviours (lib, null, agent);
 		}
 
+        public virtual BehaviourDict GetBehavioursFromPlan(string lib, string plan, AgentBase agent)
+        {
+            PlanBuilder builder = new LAPParser().Parse(AssemblyControl.GetControl().GetPlanFile(lib, plan));
+            Behaviour behave;
+            BehaviourDict dict = new BehaviourDict();
+            foreach (KeyValuePair<string, Tuple<string, long, List<object>, List<Tuple<string, List<object>, string, int>[]>>> pair in builder.competences)
+            {
+                foreach(Tuple<string, List<object>, string, int>[] sub in pair.Value.Forth)
+                {
+                    //KeyValuePair<string, int> 
+                    List<string> _sense = new List<string>(sub[0].Second.Count);
+                    List<int> _senseValue = new List<int>(sub[0].Second.Count);
+                    foreach (Tuple<string, string, string> a in sub[0].Second)
+                    {
+                        _sense.Add( a.First);
+                        _senseValue.Add(int.Parse(a.Second));
+                    } 
+                    string _action = sub[0].Third;
+            //        KeyValuePair<List<string>[],List<int>[]> pair1 = new KeyValuePair<List<string>[], List<int>[]>(_sense,_senseValue);
+                }
+            } 
+
+         //   behave = (agent, _action, _sense,"","");
+
+          //  dict.RegisterBehaviour(behave);
+
+            //object[] para = new object[1] { agent };
+
+            return dict;
+
+            //return (dict.getBehaviours().Count() > 0) ? dict : new BehaviourDict();
+        }
+
         /// <summary>
         /// Returns a sequence of classes, containing all behaviour classes that
         /// are available in a particular library.
@@ -326,7 +360,7 @@ namespace POSH.sys
                     //log.Info(String.Format("Creating instance of behaviour {0}.", t));
                     ConstructorInfo behaviourConstruct = t.GetConstructor(types);
                     object[] para = new object[1] { agent };
-                    log.Debug("Registering behaviour in behaviour dictionary");
+                    //log.Debug("Registering behaviour in behaviour dictionary");
                     if (behaviourConstruct != null)
                     {
                         Behaviour behave = (Behaviour)behaviourConstruct.Invoke(para);

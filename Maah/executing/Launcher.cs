@@ -208,7 +208,7 @@ namespace POSH.executing
             //plan = "library" + Path.DirectorySeparatorChar + "plans"+ Path.DirectorySeparatorChar + plan + ".lap";
             //Console.Out.WriteLine("plan = {0}", plan);
             Console.Out.WriteLine("- Creating agent");
-            agents = AgentFactory.CreateAgents("POSHBot.dll", plan, null, null);//POSHBot.dll
+            agents = AgentFactory.CreateAgents("", plan, null, null);//POSHBot.dll
             Console.Out.WriteLine("plan type +{0}", agents);// Type.GetType(agentType) );
             Console.ReadKey();
 

@@ -2,7 +2,7 @@
   "profiles": {
     "Maah": {
       "commandName": "Project",
-      "commandLineArgs": "-v -p=POSHBot"
+      "commandLineArgs": "-v -p=Maah_5"
     }
   }
 }

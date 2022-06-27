@@ -360,7 +360,7 @@ namespace POSH.sys
                     //log.Info(String.Format("Creating instance of behaviour {0}.", t));
                     ConstructorInfo behaviourConstruct = t.GetConstructor(types);
                     object[] para = new object[1] { agent };
-                    //log.Debug("Registering behaviour in behaviour dictionary");
+                    log.Debug("Registering behaviour in behaviour dictionary");
                     if (behaviourConstruct != null)
                     {
                         Behaviour behave = (Behaviour)behaviourConstruct.Invoke(para);

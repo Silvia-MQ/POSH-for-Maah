@@ -49,7 +49,7 @@
 		(play (trigger ((been_petted 1.0 =))) interact))
 		(
 
-		(inch (trigger ((catch_attention 1.0 !=))) ap_idle))
+		(inch (trigger ((no_attention 1.0 =))) ap_idle))
 
 	)
 )

@@ -231,24 +231,24 @@ namespace Posh_sharp.POSHBot
             }
         }
 
-        [ExecutableSense("IsRotating")]
-        public bool IsRotating()
+        [ExecutableSense("been_petted")]
+        public bool been_petted()
         {
             if (_debug_)
                 Console.Out.WriteLine("in IsRotating");
             return GetBot().Turning();
         }
 
-        [ExecutableSense("is_walking")]
-        public bool is_walking()
+        [ExecutableSense("forward_frq")]
+        public bool forward_frq()
         {
             if (_debug_)
                 Console.Out.WriteLine("in is_walking");
             return GetBot().Moving();
         }
 
-        [ExecutableSense("IsStuck")]
-        public bool IsStuck()
+        [ExecutableSense("backward_frq")]
+        public bool backward_frq()
         {
             // print "Stuck"
 
@@ -258,8 +258,8 @@ namespace Posh_sharp.POSHBot
         /// <summary>
         /// returns 1 if we're near enough to enemy base
         /// </summary>
-        [ExecutableSense("at_enemy_base")]
-		public bool at_enemy_base()
+        [ExecutableSense("turnleft_frq")]
+		public bool turnleft_frq()
         {
             if (_debug_)
                 Console.Out.WriteLine("in at_enemy_base");
@@ -270,20 +270,18 @@ namespace Posh_sharp.POSHBot
         /// returns 1 if we're near enough to our own base
         /// </summary>
         /// <returns></returns>
-		[ExecutableSense("at_own_base")]
-		public bool at_own_base()
+		[ExecutableSense("turnright_frq")]
+		public bool turnright_frq()
         {
-            if (_debug_)
-                Console.Out.WriteLine("in at_own_base");
-            return atTargetLocation(info.ownBasePos, 10);
+            
         }
 
         /// <summary>
         /// returns 1 if we have a location for the enemy base
         /// </summary>
         /// <returns></returns>
-        [ExecutableSense("KnowEnemyBasePos")]
-        public bool KnowEnemyBasePos()
+        [ExecutableSense("been_petted_past")]
+        public bool been_petted_past()
         {
             return (info.enemyBasePos != null) ? true : false;
         }
@@ -302,8 +300,8 @@ namespace Posh_sharp.POSHBot
         /// returns 1 if there's a reachable nav point in the bot's list which we're not already at
         /// </summary>
         /// <returns></returns>
-        [ExecutableSense("ReachableNavPoint")]
-        public bool ReachableNavPoint()
+        [ExecutableSense("petted_frequency_past")]
+        public bool petted_frequency_past()
         {
             Vector3 location;
             NavPoint navPoint;
@@ -400,23 +398,10 @@ namespace Posh_sharp.POSHBot
         /// 
         /// </summary>
         /// <returns>returns 1 if the enemy flag is specified as reachable</returns>
-        [ExecutableSense("enemy_flag_reachable")]
-		public bool enemy_flag_reachable()
+        [ExecutableSense("greeting_frq")]
+		public bool greeting_frq()
         {
-            if (this.info.HasEnemyFlagInfoExpired())
-                info.ExpireEnemyFlagInfo();
-
-            // debug
-            if (_debug_)
-            {
-                Console.Out.WriteLine("in EnemyFlagReachable");
-                if (info.enemyFlagInfo.Count() > 0)
-                    Console.Out.WriteLine("enemyFlaginfo "+info.enemyFlagInfo.ToString());
-            }
-
-            // Made simpler FA
-            if (info.enemyFlagInfo.Count () > 0 && bool.Parse (info.enemyFlagInfo ["Reachable"]))
-                return true;
+            int f = GetBot().GetFreq("greeting");
 
             return false;
 
@@ -426,81 +411,70 @@ namespace Posh_sharp.POSHBot
         /// 
         /// </summary>
         /// <returns>returns 1 if our flag is specified as reachable</returns>
-		[ExecutableSense("our_flag_reachable")]
-		public bool our_flag_reachable()
+		[ExecutableSense("separation_frq")]
+		public bool separation_frq()
         {
-            if (this.info.HasOurFlagInfoExpired())
-                info.ExpireOurFlagInfo();
-
-            // debug
-            if (_debug_)
-            {
-                Console.Out.WriteLine("in OurFlagReachable");
-                if (info.ourFlagInfo.Count() > 0)
-                    Console.Out.WriteLine("ourFlaginfo "+info.ourFlagInfo.ToString());
-            }
-
-            // Made simpler FA
-            if (info.ourFlagInfo.Count () > 0 && bool.Parse (info.ourFlagInfo ["Reachable"]))
-                return true;
+            int f = GetBot().GetFreq("seperation");
 
             return false;
 
         }
 
-        [ExecutableSense("SeeEnemy")]
-        public bool SeeEnemy()
+        [ExecutableSense("surprise_frq")]
+        public bool surprise_frq()
         {
-            if (GetBot().viewPlayers.Count == 0 || GetBot().info.Count == 0)
-                return false;
-
-            // work through, looking for an enemy
-            string ourTeam = GetBot().info["Team"];
-            UTPlayer[] players = GetBot().viewPlayers.Values.ToArray();
-            foreach (UTPlayer currentPlayer in players)
-                if (currentPlayer.Team != ourTeam)
-                {
-                    if (_debug_)
-                        Console.Out.WriteLine("SeeEnemy: we can see an enemy!");
-                    return true;
-                }
+            int f = GetBot().GetFreq("surprise");
 
             return false;
         }
 
-        
+        [ExecutableSense("cuddle_frq")]
+        public bool cuddle_frq()
+        {
+            int f = GetBot().GetFreq("cuddle");
+
+            return false;
+        }
+        [ExecutableSense("mothering_frq")]
+        public bool mothering_frq()
+        {
+            int f = GetBot().GetFreq("mothering");
+
+            return false;
+        }
+        [ExecutableSense("social_call_frq")]
+        public bool social_call_frq()
+        {
+            int f = GetBot().GetFreq("socialcall");
+
+            return false;
+        }
+        [ExecutableSense("escape_frq")]
+        public bool escape_frq()
+        {
+            int f = GetBot().GetFreq("escape");
+            return false;
+        }
+        [ExecutableSense("caress_frq")]
+        public bool caress_frq()
+        {
+            GetBot().GetFreq("caress");
+
+            return false;
+        }
+        [ExecutableSense("no_attention")]
+        public bool no_attention()
+        {
+            
+
+            return false;
+        }
+
+
 
         ///
         /// ACTIONS
         /// 
-
-        [ExecutableAction("moveto_navpoint",1f)]
-		public bool moveto_navpoint()
-        {
-			if (_debug_)
-				Console.Out.Write("moveto_navpoint:");
-			if (GetNavigator ().selected_target ()) 
-			{
-				SendMoveToLocation (GetNavigator ().GetSelectedNavpoint ().Location);
-				GetNavigator ().MovedToNavpoint ( GetNavigator ().GetSelectedNavpoint ());
-				return true;
-			}
-
-			return false;
-        }
-
-        /// <summary>
-        /// Stops the Bot from doing stuff
-        /// </summary>
-        /// <returns></returns>
-        [ExecutableAction("StopBot")]
-        public bool StopBot()
-        {
-            // print "StGetBot Bot"
-            GetBot().SendMessage("STOP", new Dictionary<string, string>());
-
-            return true;
-        }
 
         /// <summary>
         /// Idleing
@@ -509,63 +483,114 @@ namespace Posh_sharp.POSHBot
         [ExecutableAction("idle")]
         public bool idle()
         {
-            // print "Idleing ..GetBot            
-			return GetBot().Inch();
+            return GetBot().Send("Iddle");
+        }
+
+        [ExecutableAction("act_forward")]
+		public bool act_forward()
+        {
+            return  GetBot().Send("Forward"); 
+        }
+
+        [ExecutableAction("act_backward")]
+        public bool act_backward()
+        {
+            return GetBot().Send("Backward"); 
+        }
+
+
+        [ExecutableAction("act_turnleft")]
+        public bool act_turnleft()
+        {
+            return GetBot().Send("TurnLeft");
+        }
+
+        [ExecutableAction("act_turnright")]
+        public bool act_turnright()
+        {
+            return GetBot().Send("TurnRight");
         }
 
         /// <summary>
-        /// Rotating the bot around itself (left or right)
+        /// 
         /// </summary>
-        /// <param name="angle">If angle is not given random 90 degree turn is made</param>
         /// <returns></returns>
-        [ExecutableAction("Rotate")]
-        public bool Rotate()
+        [ExecutableAction("act_greeting")]
+        public bool act_greeting()
         {
-            return Rotate(0);
-        }
-
-        protected bool Rotate(int angle)
-        {
-            // print "Rotate ..."
-            if (angle != 0)
-                GetBot().Turn(angle);
-            else if (new Random().Next(2) == 0)
-                // tuGetBott
-                GetBot().Turn(90);
-            else
-                // turGetBott
-                GetBot().Turn(-90);
-
-
-            return true;
+            return GetBot().Send("Greeting");
         }
 
         /// <summary>
-        /// Turns the bot 160 degrees
+        /// 
         /// </summary>
         /// <returns></returns>
-        [ExecutableAction("BigRotate")]
-        public bool BigRotate()
+        [ExecutableAction("act_separation")]
+        public bool act_separation()
         {
-            // print "big rotate ..."
-
-            return Rotate(160);
+            return GetBot().Send("Seperation");
         }
 
         /// <summary>
-        /// Runs to the chosen Navpoint
+        /// 
         /// </summary>
         /// <returns></returns>
-        [ExecutableAction("WalkToNavPoint")]
-        public bool WalkToNavPoint()
+        [ExecutableAction("act_surprise")]
+        public bool act_surprise ()
         {
-            if (_debug_)
-                Console.Out.WriteLine("in WalkToNavPoint");
-            SendMoveToLocation(info.chosenNavPoint.Location);
-
-            return true;
+            return GetBot().Send("Surprise");
         }
 
-    }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [ExecutableAction("act_cuddle")]
+        public bool act_cuddle()
+        {
+            return GetBot().Send("Cuddle");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [ExecutableAction("act_mothering")]
+        public bool act_mothering()
+        {
+            return GetBot().Send("Mothering");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [ExecutableAction("act_social_call")]
+        public bool act_social_call()
+        {
+            return GetBot().Send("SocialCall");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [ExecutableAction("act_escape")]
+        public bool act_escape()
+        {
+            return GetBot().Send("Escape");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [ExecutableAction("act_caress")]
+        public bool act_caress()
+        {
+            return GetBot().Send("Caress");
+        }
+
+}
     
 }

@@ -194,7 +194,7 @@ namespace POSH.sys.strict
             timer = null;
             // read plan, parse it and build drive collection
  	        PlanBuilder builder = new LAPParser().Parse(AssemblyControl.GetControl().GetPlanFile(library, planName));
-            //Console.Out.WriteLine("")
+
             dc = builder.build(this);
         }
 

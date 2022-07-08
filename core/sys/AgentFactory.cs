@@ -152,7 +152,7 @@ namespace POSH.sys
                     throw new KeyNotFoundException(string.Format("plan type of plan {0} not recognised", agentPlan));
                 Type agentType = AGENTTYPE.getType(planType);
                 // create agent and append to sequence
-                Console.Out.Write("agent type from plans {0}", agentType);
+                //Console.Out.Write("agent type from plans {0}", agentType);
                 Type[] constructorTypes = new Type[4];
                 constructorTypes[0] = assemblyName.GetType();
                 constructorTypes[1] = agentPlan.GetType();

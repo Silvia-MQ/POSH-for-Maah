@@ -11,25 +11,107 @@ using System.Text.RegularExpressions;
 using POSH.sys.strict;
 using Posh_sharp.POSHBot.util;
 
+
 namespace Posh_sharp.POSHBot
 {
-//#  We need to start a comms thread in order to get updates
-//#  to the agent status from the server.
-//from socket import *
-//from POSH import Behaviour
-//from POSH.utils import current_time
-//import re #re is for Regular Expressions
-//import thread
-//import sys
-//import time
+    public class Communicate
+    {
+        public Socket client;
+        public Dictionary<string,int> Buffer;
 
-     
-     //POSHBot created as a means of evaluating Behaviour Oriented Design [BOD]
-     //Much code here re-used from Andy Kwong's poshbot
-     //It has been refactored on the 29/08/07 to make Bot a behaviour and clean
-     //up the behaviour structure a bit.
-     
-    
+        /// <summary>
+        /// Wrapper for InitTCP
+        /// </summary>
+        public Socket ExecuteClient()
+        {
+            client = InitTCP();
+            return client;
+        }
+        /// <summary>
+        /// Initialise a TCP connection
+        /// and connect to endpoint with the port number of 12345
+        /// </summary>
+        static Socket InitTCP()
+        {
+            // Establish the remote endpoint
+            // for the socket. This example
+            // uses port 12345 on the local
+            // computer.
+            IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress ipAddr = ipHost.AddressList[1]; //sometimes should be ipHost.AddressList[0] //MinQ: check the difference here
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 12345);
+
+            // Creation TCP/IP Socket using
+            // Socket Class Constructor
+            Socket client = new Socket(ipAddr.AddressFamily,
+                       SocketType.Stream, ProtocolType.Tcp);
+
+            // Connect Socket to the remote
+            // endpoint using method Connect()
+            client.Connect(localEndPoint);
+            Console.WriteLine("Socket connected to -> {0} ",
+                                  client.RemoteEndPoint.ToString());
+            return client;
+        }
+
+        /// <summary>
+        /// Send data through socket
+        /// </summary>
+        /// <param name="arg">
+        /// The string to be sent to python, which should be the next behaviour of Maah 
+        /// </param>
+        /// <returns>
+        /// The return data from python.
+        /// Once Maah finish the behaviour, 'Done' will be sent
+        /// </returns>
+        public string SendData(string arg)
+        {
+            byte[] message = Encoding.ASCII.GetBytes(arg);
+            client.Send(message);
+            Console.WriteLine("Data Sent:" + Encoding.ASCII.GetString(message));
+
+            return RevieveData();
+        }
+
+        public string RevieveData()
+        {
+            byte[] receive = new byte[1024];
+            int length = client.Receive(receive);
+            Console.WriteLine("Data Recieved:" + Encoding.ASCII.GetString(receive));
+            return receive.ToString();
+        }
+
+        /// <summary>
+        /// process frequency data from python
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns> returns a dictionary of action and their frequency
+        /// </returns>
+        public Dictionary<string, double> FreqCal(string data)
+        {
+            ///TBC
+        }
+
+    }
+
+
+    //#  We need to start a comms thread in order to get updates
+    //#  to the agent status from the server.
+    //from socket import *
+    //from POSH import Behaviour
+    //from POSH.utils import current_time
+    //import re #re is for Regular Expressions
+    //import thread
+    //import sys
+    //import time
+
+
+    //POSHBot created as a means of evaluating Behaviour Oriented Design [BOD]
+    //Much code here re-used from Andy Kwong's poshbot
+    //It has been refactored on the 29/08/07 to make Bot a behaviour and clean
+    //up the behaviour structure a bit.
+
+
     /// <summary>
     /// The Bot behaviour.
     ///    
@@ -109,11 +191,12 @@ namespace Posh_sharp.POSHBot
         bool connReady;
         bool connectedToGame;
         Thread connThread;
+        Communicate client = new Communicate();
 
 
         public POSHBot(AgentBase agent) : this(agent,null)
         {
-
+            
         }
 
         public POSHBot(AgentBase agent, Dictionary<string,object> attributes)
@@ -161,6 +244,8 @@ namespace Posh_sharp.POSHBot
             connReady = false;
 
             connThread = null;
+
+            client.ExecuteClient();
         }
 
 
@@ -680,6 +765,7 @@ namespace Posh_sharp.POSHBot
             // self.send_message("TURNTO", {"Pitch" : str(0)})
         }
 
+
         internal int GetYaw()
         {
             if (this.info.ContainsKey("Rotation"))
@@ -737,6 +823,21 @@ namespace Posh_sharp.POSHBot
                 return true;
 
             return false;
+        }
+
+        internal int GetFreq(string action)
+        {
+            int freq;
+            //check the freq of specific action
+            client.Buffer.TryGetValue(action, out freq);
+            return freq;
+        }
+
+        public bool Send(string data)
+        {
+            string recall = client.SendData(data);
+
+            return (recall == "Done") ? true : false;
         }
 
 		internal bool Stuck()

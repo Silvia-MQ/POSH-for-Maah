@@ -209,7 +209,7 @@ namespace POSH.sys
                 // TODO: @swen: some clever log or comment here!!!
             }
             string planResult = new StreamReader(File.OpenRead(result)).ReadToEnd();
-            Console.Out.WriteLine("length of plan file {0}", planResult.Length);
+            //Console.Out.WriteLine("length of plan file {0}", planResult.Length);
             return planResult;
         }
 
@@ -292,37 +292,89 @@ namespace POSH.sys
 			return GetBehaviours (lib, null, agent);
 		}
 
+        /// <summary>
+        /// get behaviours only from plan file 
+        /// </summary>
+        /// <param name="lib"> library path</param>
+        /// <param name="plan">plan name</param>
+        /// <param name="agent"></param>
+        /// <returns></returns>
         public virtual BehaviourDict GetBehavioursFromPlan(string lib, string plan, AgentBase agent)
         {
             PlanBuilder builder = new LAPParser().Parse(AssemblyControl.GetControl().GetPlanFile(lib, plan));
             Behaviour behave;
             BehaviourDict dict = new BehaviourDict();
+
+            ///MinQ find better way to implment these loops-->package!!
+
+            ///Traversal Competence Element , extract behaviour and sense accrodingly
+            ///Foreach Competence Element
             foreach (KeyValuePair<string, Tuple<string, long, List<object>, List<Tuple<string, List<object>, string, int>[]>>> pair in builder.competences)
             {
-                foreach(Tuple<string, List<object>, string, int>[] sub in pair.Value.Forth)
+                //pair.Key == name;
+
+                List<string> _actions = new List<string>(pair.Value.Forth.Count);
+                List<string> _senses = new List<string>();
+                ///foreach action in a competence
+                foreach (Tuple<string, List<object>, string, int>[] sub in pair.Value.Forth)
                 {
-                    //KeyValuePair<string, int> 
-                    List<string> _sense = new List<string>(sub[0].Second.Count);
-                    List<int> _senseValue = new List<int>(sub[0].Second.Count);
+                    
+                    //List<string> _sense = new List<string>(sub[0].Second.Count);
+                    //List<int> _senseValue = new List<int>(sub[0].Second.Count);
+
+                    ///foreach sense element
                     foreach (Tuple<string, string, string> a in sub[0].Second)
                     {
-                        _sense.Add( a.First);
-                        _senseValue.Add(int.Parse(a.Second));
-                    } 
-                    string _action = sub[0].Third;
-            //        KeyValuePair<List<string>[],List<int>[]> pair1 = new KeyValuePair<List<string>[], List<int>[]>(_sense,_senseValue);
+                        _senses.Add(a.First);
+                        //_senseValue.Add(int.Parse(a.Second));
+                    }
+                    //_senses = _sense;
+                    _actions.Add(sub[0].Third);           
+                          
                 }
-            } 
+                
+                behave = new Behaviour(agent, _actions.ToArray(), _senses.ToArray());
+                behave.suitedPlans = pair.Key;
+                
+                dict.RegisterBehaviourOverride(behave);
+                //Console.Out.WriteLine("Test");
+                //Console.ReadKey(); 
 
-         //   behave = (agent, _action, _sense,"","");
+            }
 
-          //  dict.RegisterBehaviour(behave);
+            
+            //List<string> _sense = new List<string>(builder.driveCollection.Forth.Count);
+            /// check each drive collection
+            foreach (Tuple<string, List<object>, string, long>[] p in builder.driveCollection.Forth)
+            {
+                foreach (Tuple<string,string,string> sub in p[0].Second)
+                {
+                    List<string> _sense = new List<string>(builder.driveCollection.Forth.Count);
+                    //List<int> _senseValue = new List<int>(sub[0].Second.Count);
+                    _sense.Add(sub.First);
 
-            //object[] para = new object[1] { agent };
+                    behave = new Behaviour(agent,null, _sense.ToArray());
+                    behave.suitedPlans = p[0].Third;
+                    //Console.Out.WriteLine("behave name {0}", behave.GetName());
+                    //Console.ReadKey();
+                    dict.RegisterBehaviourOverride(behave);
+                }
+            }
 
-            return dict;
+            foreach (KeyValuePair<string,Tuple<string,long,List<object>>> p in builder.actionPatterns)
+            {
+                List<string> _actions = new List<string>();  
+                //p.Value.Third[];
+                foreach (string sub in p.Value.Third)
+                {
+                    _actions.Add(sub);
+                    behave = new Behaviour(agent, _actions.ToArray(), null);
+                    behave.suitedPlans = p.Key;
+                }
+            }
+            
+            return (dict.getBehaviours().Count() > 0) ? dict : new BehaviourDict(); //dict;
 
-            //return (dict.getBehaviours().Count() > 0) ? dict : new BehaviourDict();
         }
 
         /// <summary>

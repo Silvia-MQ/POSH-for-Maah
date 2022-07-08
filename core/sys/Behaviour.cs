@@ -48,7 +48,12 @@ namespace POSH.sys
             this.attributes = new Dictionary<string, object>();
         }
 
-		public Behaviour(AgentBase agent,string [] actions,string []senses) 
+        /*public Behaviour(AgentBase agent, string[] senses)
+            : this(agent, null, senses, null, null)
+        { }*/
+
+
+        public Behaviour(AgentBase agent,string [] actions,string []senses) 
 			: this(agent,actions,senses,null, null)
 		{}
 
@@ -67,10 +72,11 @@ namespace POSH.sys
         /// <param name="senses">The sense names to register.</param>
         /// <param name="attributes">List of attributes to initialise behaviour state.</param>
         /// <param name="caller"></param>
+        /*
         public Behaviour(AgentBase agent,string [] actions,string []senses,Dictionary<string,object> a_attributes,Behaviour caller) 
             : this(agent)
         {
-
+            
             Dictionary<string, SortedList<float,POSHPrimitive>> availableActions = new Dictionary<string, SortedList<float,POSHPrimitive>>();
             Dictionary<string, SortedList<float,POSHPrimitive>> availableSenses = new Dictionary<string, SortedList<float,POSHPrimitive>>();
 
@@ -100,8 +106,79 @@ namespace POSH.sys
             if (a_attributes != null)
                 AssignAttributes(a_attributes);
 
-        }
+        }*/
+        public Behaviour(AgentBase agent, string[] actions, string[] senses, Dictionary<string, object> a_attributes, Behaviour caller)
+            : this(agent)
+        {
 
+            Dictionary<string, SortedList<float, POSHPrimitive>> availableActions = new Dictionary<string, SortedList<float, POSHPrimitive>>();
+            Dictionary<string, SortedList<float, POSHPrimitive>> availableSenses = new Dictionary<string, SortedList<float, POSHPrimitive>>();
+
+            if (caller != null)
+                GetActionsSenses(caller);
+            
+            else
+            {
+                //MethodInfo[] methods = this.GetType().GetMethods();
+
+                //MinQ: find a better way to package this
+                if (actions!= null)
+                {
+                    foreach (string i in actions)
+                    {
+                        POSHPrimitive prim = new POSHPrimitive(i);
+                        
+                        prim.SetLinkedMethod(i);
+                        prim.SetOriginatingBhaviour(this);
+                        
+                        SortedList<float, POSHPrimitive> list = new SortedList<float, POSHPrimitive>();
+                        list[prim.version] = prim as ExecutableAction;
+                        availableActions[prim.command] = list;
+                    }
+                }
+                    
+                if (senses != null)
+                {
+                    foreach (string i in senses)
+                    { ///
+                    if (availableSenses.ContainsKey(i))
+                        continue;
+                    else
+                    {
+                        POSHPrimitive prim = new POSHPrimitive(i);
+
+                        prim.SetLinkedMethod(i);
+                        prim.SetOriginatingBhaviour(this);
+
+                        SortedList<float, POSHPrimitive> list = new SortedList<float, POSHPrimitive>();
+                        list[prim.version] = prim as ExecutableAction;
+                        availableSenses[prim.command] = list;
+                        }/*
+                        POSHPrimitive prim = new POSHPrimitive(i);
+
+                        prim.SetLinkedMethod(i);
+                        prim.SetOriginatingBhaviour(this);
+
+                        SortedList<float, POSHPrimitive> list = new SortedList<float, POSHPrimitive>();
+                        list[prim.version] = prim as ExecutableAction;
+                        availableSenses[prim.command] = list;*/
+                    }
+                 }
+                
+
+                this.attributes[ACTIONS] = availableActions;
+                this.attributes[SENSES] = availableSenses;
+                ///MinQ find a better place to store the name of bahaviour!!!
+                //this.suitedPlans = name;
+            }
+
+            
+
+            // assign additional attributes
+            if (a_attributes != null)
+                AssignAttributes(a_attributes);
+
+        }
         /// <summary>
         /// removes all entries of the dictionary which are mentioned in the filter
         /// As only the dict reference is passed in the dictionary will be modified even if it is not passed back.
@@ -128,8 +205,7 @@ namespace POSH.sys
         {
             MethodInfo[] methods = source.GetType().GetMethods();
             Dictionary<string, SortedList<float, POSHPrimitive>> primitives = new Dictionary<string, SortedList<float, POSHPrimitive>>();
-
-
+            
             foreach (MethodInfo method in methods)
             {
                 POSHPrimitive prim = null;
@@ -164,10 +240,9 @@ namespace POSH.sys
                         primitives[prim.command] = list;
                     }
 
-
                 }
             }
- 
+
             return primitives;
         }
 
@@ -229,7 +304,16 @@ namespace POSH.sys
         /// </summary>
         public string GetName()
         {
-            return this.GetType().FullName.ToString();
+            //return this.GetType().FullName.ToString();
+            /*Behaviour B = this;
+            foreach (POSHPrimitive prim in B.attributes[ACTIONS]);
+            if ( )
+            string name = this.attributes[ACTIONS];
+
+
+            if (B.attributes[ACTIONS].GetType().IsSubclassOf(typeof(POSH.sys.annotations.POSHPrimitive)))
+                return */
+            return this.suitedPlans; 
         }
 
         /// <summary>

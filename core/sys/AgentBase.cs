@@ -97,9 +97,9 @@ namespace POSH.sys
             // profiler= Profiler.initProfile(this); 
 
             // load and register the behaviours, and reflect back onto agent
-            this._bdict = LoadBehaviours();
+            //this._bdict = LoadBehaviours();
             //ReflectBehaviours();
-            //this._bdict = LoadBehavioursFromPlan();
+            this._bdict = LoadBehavioursFromPlan();
 
             //# more for the profiler
             // FIXME: PR -- is there another place to do this?  will it succeed without MASON? JJB 1 March 2008
@@ -110,7 +110,7 @@ namespace POSH.sys
             //    pass # normally don't expect profiling, nor necessarily MASON
  
             // assign the initial attributes to the behaviours
-            this.AssignAttributes(attributes);
+            //this.AssignAttributes(attributes);
             
             // load the plan and behaviour from plan
             LoadPlan(plan);

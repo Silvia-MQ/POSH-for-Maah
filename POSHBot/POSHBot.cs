@@ -21,7 +21,7 @@ namespace Posh_sharp.POSHBot
         /// <summary>
         /// freq for behaviours
         /// </summary>
-        public struct ToJsonMy
+        public struct BehavList
         {
             public int Reset { get; set; }  //The name of Attributes should match the key in json file
             public int Forward { get; set; }
@@ -42,14 +42,14 @@ namespace Posh_sharp.POSHBot
         /// <summary>
         /// buffer for pet freq
         /// </summary>
-        public struct JsonPet
+        public struct ListPet
         {
             public int PetNow { get; set; }
             public int PetPast { get; set; }
         }
 
-        public ToJsonMy BehavFreq = new ToJsonMy();
-        public JsonPet PetFreq = new JsonPet();
+        public BehavList BehavFreq = new BehavList();
+        public ListPet PetFreq = new ListPet();
         /// <summary>
         /// Wrapper for InitTCP
         /// </summary>
@@ -124,14 +124,14 @@ namespace Posh_sharp.POSHBot
             }
             else if (Encoding.UTF8.GetString(receive, 0, length).Contains("PetNow"))
             {
-                PetFreq = JsonConvert.DeserializeObject<JsonPet>(Encoding.UTF8.GetString(receive, 0, length));
+                PetFreq = JsonConvert.DeserializeObject<ListPet>(Encoding.UTF8.GetString(receive, 0, length));
                 Console.WriteLine("command executed");
 
                 return null;
             }
             else
             {
-                BehavFreq = JsonConvert.DeserializeObject<ToJsonMy>(Encoding.UTF8.GetString(receive, 0, length));
+                BehavFreq = JsonConvert.DeserializeObject<BehavList>(Encoding.UTF8.GetString(receive, 0, length));
                 Console.WriteLine("command executed");
 
                 Array.Clear(receive, 0, length);
@@ -885,7 +885,7 @@ namespace Posh_sharp.POSHBot
         internal int GetFreq(string action)
         {
             //check the freq of specific action
-            int counts = client.BehavFreq.action;!!!
+            int counts = client.BehavFreq.action;
             return counts;
         }
         internal int GetFreq(string a, string b, string c)

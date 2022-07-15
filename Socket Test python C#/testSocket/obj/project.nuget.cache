@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "Diu9xCNbw0rQi9nlgkdBZ44xAKMuKzcXcy3pMk7TkMLiEbHzGBqtzUCwgFnw0aJUKa8axufxgfXNq0qAl4mZVw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\11587\\Desktop\\TCP能跑版\\testSocket\\testSocket.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\11587\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

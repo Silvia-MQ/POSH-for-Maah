@@ -10,6 +10,8 @@ import random as rm
 import time
 from RingBuffer import RingBuffer
 import socket
+import json
+import usb.core, usb.util, usb.control
 
 # IMPORTANT: Power the Raspberry Pi with a power supply of at least 2.1A to prevent the SSH connection from shutting off!
 #remoteLog = open('/home/pi/temp/remote.log','w')
@@ -17,7 +19,8 @@ import socket
 mover = MovementGenerator('all_keypoints.json',0.02,2)
 
 # A ring buffer to store history for last 20 behvaiours
-Buffer = RingBuffer(20)
+Behav = RingBuffer(20)
+Pet = RingBuffer(20)
 
 class Socket():
 
@@ -48,9 +51,9 @@ class Socket():
         print('Got connection from', addr)
 
     #Recieve data from socket
-    def recieve(self):
+    def getdata(self):
         # recieve data  30 Bytes
-        recv_data = s.recv(30).decode("gbk")
+        recv_data = s.recv(30).decode(encoding='UTF-8')
         #recv_data = recv_data.decode('gbk')
 
         print('RECIVED DATA:', recv_data)
@@ -58,14 +61,15 @@ class Socket():
         return recv_data
 
     #send data through socket
-    def send(self,data):
-        s.send(data.encode("gbk"))
+    def pushdata(self,data):
+        s.sendall(data.encode(encoding='UTF-8'))
         print('SEND DATA:',data)
 
 #The dictionary of all behaviours
-BehavDict = {"Reset":0,"Forward":1,"TurnLeft":2,"TurnRight":3,"Iddle":4,
-            "Backwards":5,"Cuddle":6,"Mothering":7,"Escape":8,"Greeting":9,
-            "Seperation":10,"Surprise":11,"SocialCall":12,"Caress":12}
+BehavDict = {"Reset":0,"Forward":0,"TurnLeft":0,"TurnRight":0,"Iddle":0,
+            "Backwards":0,"Cuddle":0,"Mothering":0,"Escape":0,"Greeting":0,
+            "Seperation":0,"Surprise":0,"SocialCall":0,"Caress":0}
+PetDict = {"PetNow":0,"PetPast":0}
 
 #Functions of behaviours
 def Reset():
@@ -136,8 +140,7 @@ def Caress():
     mover.generate_motion(1500, 1610)
     return
 
-# BehavFreq returns a list of frequencies
-# the index of the list is map to the behaviour according to BehavDict
+# BehavFreq returns a list of counts of each behaviour in memory of 20 behaviours
 
 # Find a better way to calculate the frequencies of each behaviour
 # Maybe only update the value of latest and oldest data?
@@ -146,56 +149,128 @@ def Caress():
 
 def BehavFreq(Buffer):
 
-    freq = [0]*len(BehavDict)
+    freq = BehavDict.copy()
+
 
     # go through the entire ringbuffer everytime
     for i in range(0, Buffer.capacity):
         #check if data in buffer is a valid behaviour
         if Buffer.read() in BehavDict:
-            index = BehavDict[Buffer.read()]
-            freq[index] += 1
+            freq[Buffer.read()] += 1
 
-    #this will change int quantity into freq
+    #this will change counts into freq
     #for i in range(0,len(freq)):
     #    freq[i] /= Buffer.capacity
 
     return freq
 
+def PetFreq(sensor, Pet):
+
+    freq = PetDict.copy()
+    if (sensor == 1):
+        freq["PetNow"] = 1
+        Pet.write(1)
+    else:
+        freq["PetNow"] = 0
+        Pet.write(0)
+
+    # go through the entire ringbuffer everytime
+    for i in range(0, Buffer.capacity):
+        #check if data in buffer is a valid behaviour
+        if Buffer.read()==1:
+            freq["PetPast"] += 1
+
+    return freq
+
+
+class Remote():
+
+    def __init__(self):
+        # initiate remote
+        dev = usb.core.find(idVendor=0x2252, idProduct=0x1037)
+        execute = None
+        try:
+            if dev is None:
+                raise ValueError('device not found')
+
+            cfg = dev.get_active_configuration()
+
+            # Create remote interfaces. The remote seems to need 2 interfaces to transmit a value from 0 to 256:
+            interface_number1 = cfg[(0, 0)].bInterfaceNumber  # used for the first interface
+            interface_number2 = cfg[(1, 0)].bInterfaceNumber  # used for the second interface
+
+            intf1 = usb.util.find_descriptor(
+                cfg, bInterfaceNumber=interface_number1)
+            intf2 = usb.util.find_descriptor(
+                cfg, bInterfaceNumber=interface_number2)
+
+            if dev.is_kernel_driver_active(interface_number1):
+                dev.detach_kernel_driver(interface_number1)
+            if dev.is_kernel_driver_active(interface_number2):
+                dev.detach_kernel_driver(interface_number2)
+
+            ep1 = usb.util.find_descriptor(
+                intf1,
+                custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN)
+            ep2 = usb.util.find_descriptor(
+                intf2,
+                custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN)
+
+
+    # check if the OK button is pressed or not
+    def checkbutton(self):
+        try:
+            # lsusb -v : find wMaxPacketSize (8 in my case)
+            remote1 = ep1.read(3, timeout=50)
+            signal = int(remote1[2])
+            if signal == 40:
+                return 1
+        except usb.core.USBError:
+            pass
+
+        try:
+            remote2 = ep2.read(3, timeout=50)
+            signal = int(remote2[1])
+            if signal ==40:
+                return 1
+        except usb.core.USBError:
+            pass
+        return 0
+
 def main():
     #instanize a Socket
     Connection = Socket()
+    sensor = Remote()
 
     while True:
         #Get the behaviour name to execute from Socket
-        command = Connection.recieve()
+        command = Connection.getdata()
         if command in BehavDict:
             # execute the behaviour
             command()
-            #send "Done" flag of behviour completion
-            Connection.send("Done")
 
             #write the behaviour to buffer
-            Buffer.write(command)
+            Behav.write(command)
 
             #calculate every freq.
-            freq = BehavFreq(Buffer)
+            B_freq = BehavFreq(Behav)
 
-            #py.sleep(10)
-            #maybe find way to sleep, or better way to do with asychronize communicaiton
-
-            #send a start flag before sending frequncies
-            Connetion.send("Start")
-            #send the frequncies one by one
-            for i in freq:
-                Connetion.send(i)
-
-            # send an End flag after sending frequncies
-            Connection.send("End")
+            #send the frequncies
+            # change dict into string
+            flag_Behav = c.pushdata(json.dumps(B_freq))
+            # flag is None if sending succeed
 
         else:
-            Connection.send("Unrecognised command")
+            Connection.pushdata('Unrecognised command')
 
-        command = []
+
+        command.clear()
+
+        P_freq = PetFreq(sensor.checkbutton(),Pet)
+
+        PetDict["PetPast"] = 0 = PetFreq(Pet)
+        flag_Pet = c.pushdata(json.dumps(P_freq))
+
 
 
 

@@ -12,8 +12,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <StartArguments>-v -a=PoshBot.dll POSHBot</StartArguments>
-    <StartAction>Project</StartAction>
-    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <StartArguments>-a=PoshBot.dll POSHBot</StartArguments>

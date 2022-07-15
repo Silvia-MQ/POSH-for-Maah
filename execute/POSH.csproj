@@ -12,7 +12,6 @@
     <AssemblyName>POSH-sharp</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,6 +26,7 @@
     <ApplicationVersion>0.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -50,8 +50,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject>POSH.executing.Launcher</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Optimize>false</Optimize>
@@ -96,14 +95,15 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\core\POSH.core.csproj">
-      <Project>{a29ea261-c940-427b-ab72-b27eefdc15a0}</Project>
+      <Project>{A29EA261-C940-427B-AB72-B27EEFDC15A0}</Project>
       <Name>POSH.core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="..\POSHBot\init\POSHBot_init.txt">
       <Link>library\init\POSHBot_init.txt</Link>

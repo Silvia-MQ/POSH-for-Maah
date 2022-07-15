@@ -223,7 +223,7 @@ namespace POSH.executing
                     case "--assembly":
                         if (!control.IsAssembly(tuple[1]))
                             throw new UsageException(string.Format("cannot find specified assembly '{0}' containing the agent libraries", tuple[1]));
-                        assembly = tuple[1]; ///==PoshBot.dll
+                        assembly = tuple[1];
                         break;
                     default:
                         if (tuple[0].StartsWith("-") || tuple.Length > 1)
@@ -237,7 +237,7 @@ namespace POSH.executing
             // get agentLibrary from last element arguments
             if (args[args.Length-1].StartsWith("-"))
                 throw new UsageException("requires as last argument (the library); plus optional options");
-            agentLibrary = args[args.Length-1]; ///==POSHBot
+            agentLibrary = args[args.Length-1];
             if (!control.IsLibraryInAssembly(assembly,agentLibrary))
                 throw new UsageException(string.Format("cannot find specified library '{0}'",agentLibrary));
                 
@@ -249,7 +249,7 @@ namespace POSH.executing
                 throw new UsageException(string.Format("cannot find specified directory '{0}' containing the agent parameter files", control.config["InitPath"]));
                         
             // all fine
-            return new Tuple<bool,bool,string,string,string,string>(help,verbose,assembly,worldArgs,agentSuffix,agentLibrary);//==(0,1,PoshBot.dll,"","",POSHBot)
+            return new Tuple<bool,bool,string,string,string,string>(help,verbose,assembly,worldArgs,agentSuffix,agentLibrary);
         }
 
         /// <summary>
@@ -304,21 +304,16 @@ namespace POSH.executing
             Launcher application = new Launcher();
             
             Tuple<bool,bool,string,string,string,string> arguments = null;
-            if (args is string[] && args.Length > 0) {
-                arguments = application.ProcessOptions(args); //==(0,1,PoshBot.dll,"","",POSHBot)
-                //Console.Out.WriteLine("{0},{1},{2},{3},{4},{5}",arguments.First,arguments.Second,arguments.Third,arguments.Forth,arguments.Fifth,arguments.Sixth);
-                //Console.ReadKey();
-            }
+            if (args is string[] && args.Length > 0)
+                arguments = application.ProcessOptions(args);
             else
             {
                 Console.Out.WriteLine("for help use --help");
-                Console.ReadKey();
                 return;
             }
             if (arguments != null && arguments.First)
             {
                 Console.Out.WriteLine(helpText);
-                Console.ReadKey();
                 return;
             }
 
@@ -383,9 +378,8 @@ namespace POSH.executing
                         "agents. nothing more to do.");
                 return;
             }
-            
-            agents = application.control.CreateAgents(verbose, assembly, agentsInit, setting); // setting==<null, false>
-            
+
+            agents = application.control.CreateAgents(verbose, assembly, agentsInit, setting);
             if (agents == null)
                 return;
             // start the agents

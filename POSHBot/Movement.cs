@@ -234,25 +234,19 @@ namespace Posh_sharp.POSHBot
         [ExecutableSense("been_petted")]
         public bool been_petted()
         {
-            if (_debug_)
-                Console.Out.WriteLine("in IsRotating");
-            return GetBot().Turning();
+            return GetBot().GetFreq(true)==1;
         }
 
         [ExecutableSense("forward_frq")]
         public bool forward_frq()
         {
-            if (_debug_)
-                Console.Out.WriteLine("in is_walking");
-            return GetBot().Moving();
+            return( GetBot().GetFreq("Forward")<2 );
         }
 
         [ExecutableSense("backward_frq")]
         public bool backward_frq()
         {
-            // print "Stuck"
-
-            return GetBot().Stuck();
+            return (GetBot().GetFreq("Backward") < 2);
         }
 
         /// <summary>
@@ -261,9 +255,7 @@ namespace Posh_sharp.POSHBot
         [ExecutableSense("turnleft_frq")]
 		public bool turnleft_frq()
         {
-            if (_debug_)
-                Console.Out.WriteLine("in at_enemy_base");
-            return atTargetLocation(info.enemyBasePos, 100);
+            return (GetBot().GetFreq("TurnLeft") < 2);
         }
 
         /// <summary>
@@ -273,7 +265,7 @@ namespace Posh_sharp.POSHBot
 		[ExecutableSense("turnright_frq")]
 		public bool turnright_frq()
         {
-            
+            return (GetBot().GetFreq("TurnRight") < 2);
         }
 
         /// <summary>
@@ -283,9 +275,11 @@ namespace Posh_sharp.POSHBot
         [ExecutableSense("been_petted_past")]
         public bool been_petted_past()
         {
-            return (info.enemyBasePos != null) ? true : false;
-        }
+            
+            return (GetBot().GetFreq(false)>1);
 
+        }
+        
         /// <summary>
         /// returns 1 if we have a location for our own base
         /// </summary>
@@ -303,58 +297,8 @@ namespace Posh_sharp.POSHBot
         [ExecutableSense("petted_frequency_past")]
         public bool petted_frequency_past()
         {
-            Vector3 location;
-            NavPoint navPoint;
-            int distanceTolerance = 30; // how near we must be to be thought of as at the nav point
-
-            if (GetBot().info.ContainsKey("Location"))
-                location = Vector3.ConvertToVector3(GetBot().info["Location"]);
-            else
-                // if we don't know where we are, treat it as (0,0,0) 
-                // as that will just mean we go to the nav point even if we're close by
-                location = Vector3.NullVector();
-
-            //Console.Out.WriteLine(location.ToString());
-
-            // is there already a navpoint we're aiming for?
-
-            if (info.chosenNavPoint != null)
-            {
-                navPoint = info.chosenNavPoint;
-                if (navPoint.DistanceFrom(location) > distanceTolerance)
-                    return true;
-                else
-                {
-                    info.visitedNavPoints.Add(navPoint.Id);
-                    info.chosenNavPoint = null;
-                }
-            }
-            // now look at the list of navpoints the bot can see
-            if (GetBot().navPoints == null || GetBot().navPoints.Count() < 1)
-            {
-                Console.Out.WriteLine("  no nav points");
-                return false;
-            }
-            else
-            {
-                // nav_points is a list of tuples.  Each tuple contains an ID and a dictionary of attributes as defined in the API
-                // Search for reachable nav points
-                List<NavPoint> possibleNPs = new List<NavPoint>(GetReachableNavPoints(GetBot().navPoints.Values.ToArray(), distanceTolerance, location));
-
-                // now work through this list of NavPoints until we find once that we haven't been to
-                // or the one we've been to least often
-                if (possibleNPs.Count == 0)
-                {
-                    Console.Out.WriteLine("    No PossibleNPs");
-                    return false;
-                }
-                else
-                {
-                    info.chosenNavPoint = GetLeastOftenVisitedNavPoint(possibleNPs);
-                    Console.Out.WriteLine("    Possible NP, returning 1");
-                    return true;
-                }
-            }
+            return (GetBot().GetFreq(false) >= 3);
+            //Minqiu ???
         }
 
         /// <summary>
@@ -414,62 +358,41 @@ namespace Posh_sharp.POSHBot
 		[ExecutableSense("separation_frq")]
 		public bool separation_frq()
         {
-            int f = GetBot().GetFreq("seperation");
-
-            return false;
+            return (GetBot().GetFreq("Seperation") < 2);
 
         }
 
         [ExecutableSense("surprise_frq")]
         public bool surprise_frq()
         {
-            int f = GetBot().GetFreq("surprise");
-
-            return false;
+            return (GetBot().GetFreq("Surprise") < 2);
         }
 
         [ExecutableSense("cuddle_frq")]
         public bool cuddle_frq()
         {
-            int f = GetBot().GetFreq("cuddle");
-
-            return false;
+            return (GetBot().GetFreq("Cuddle") < 2);
         }
         [ExecutableSense("mothering_frq")]
         public bool mothering_frq()
         {
-            int f = GetBot().GetFreq("mothering");
-
-            return false;
+            return (GetBot().GetFreq("Mothering") < 2);
         }
         [ExecutableSense("social_call_frq")]
         public bool social_call_frq()
         {
-            int f = GetBot().GetFreq("socialcall");
-
-            return false;
+            return (GetBot().GetFreq("SocialCall") < 2);
         }
         [ExecutableSense("escape_frq")]
         public bool escape_frq()
         {
-            int f = GetBot().GetFreq("escape");
-            return false;
+            return (GetBot().GetFreq("Escape") < 2);
         }
         [ExecutableSense("caress_frq")]
         public bool caress_frq()
         {
-            GetBot().GetFreq("caress");
-
-            return false;
+            return (GetBot().GetFreq("Caress") < 2);
         }
-        [ExecutableSense("no_attention")]
-        public bool no_attention()
-        {
-            
-
-            return false;
-        }
-
 
 
         ///

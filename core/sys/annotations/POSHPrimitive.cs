@@ -10,7 +10,7 @@ namespace POSH.sys.annotations
         /// <summary>
         /// the command is the name of a plan element referencing a specific method
         /// </summary>
-        public string command { get; private set; } 
+        public string command { get; private set; }
 
         /// <summary>
         /// the linked method name is used to identify the correct method name inside a specific behaviour

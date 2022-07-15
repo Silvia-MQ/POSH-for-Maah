@@ -25,9 +25,7 @@ namespace POSH.sys.strict
 
         protected internal DriveCollection dc;
 
-        //private List<ITCPserver.ITCPserver> iTCPservers;
-
-        public Agent(string library, string plan, Dictionary<Tuple<string,string>,object> attributes)
+		public Agent(string library, string plan, Dictionary<Tuple<string,string>,object> attributes)
 			: this(library,plan,attributes,null)
 		{}
 
@@ -194,13 +192,7 @@ namespace POSH.sys.strict
             timer = null;
             // read plan, parse it and build drive collection
  	        PlanBuilder builder = new LAPParser().Parse(AssemblyControl.GetControl().GetPlanFile(library, planName));
-
             dc = builder.build(this);
-        }
-
-        public void LoadPlanWrapper(string planName)
-        {
-            this.LoadPlan(planName);
         }
  
     }

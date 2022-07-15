@@ -34,41 +34,6 @@ namespace POSH.sys
 
         }
 
-        public void RegisterBehaviourOverride(string[] senses)
-        {
-            //Dictionary<string, SortedList<float, POSHPrimitive>> a_senses = (Dictionary<string, SortedList<float, POSHPrimitive>>)behave.attributes[Behaviour.SENSES];
-            // add the senses
-
-            //AddPrimitives(_senses, (Dictionary<string, SortedList<float, POSHPrimitive>>)behave.attributes[Behaviour.SENSES], "Sense {0} vs. {1} cannot be registered twice");
-
-        }
-
-        public void RegisterBehaviourOverride(Behaviour behave)
-        {
-            Dictionary<string, SortedList<float, POSHPrimitive>> a_actions = (Dictionary<string, SortedList<float, POSHPrimitive>>)behave.attributes[Behaviour.ACTIONS];
-            Dictionary<string, SortedList<float, POSHPrimitive>> a_senses = (Dictionary<string, SortedList<float, POSHPrimitive>>)behave.attributes[Behaviour.SENSES];
-            string behaviourName = behave.GetName();
-            
-
-            //    # add the behaviour
-            if (_behaviours.ContainsKey(behaviourName))
-            { 
-                //throw new NameException(String.Format("Behaviour {0} cannot be registered twice", behaviourName));
-                AddPrimitives(_senses, (Dictionary<string, SortedList<float, POSHPrimitive>>)behave.attributes[Behaviour.SENSES], "Sense {0} vs. {1} cannot be registered twice");
-                return;
-            }
-               
-            _behaviours.Add(behaviourName, behave);
-
-            // add the actions
-            AddPrimitives(_actions, (Dictionary<string, SortedList<float, POSHPrimitive>>)behave.attributes[Behaviour.ACTIONS], "Action {0} vs. {1} cannot be registered twice");
-
-            // add the senses
-            AddPrimitives(_senses, (Dictionary<string, SortedList<float, POSHPrimitive>>)behave.attributes[Behaviour.SENSES], "Sense {0} vs. {1} cannot be registered twice");
-
-        }
-
-
         /// <summary>
         /// Registers the given behaviour.
 
@@ -90,7 +55,6 @@ namespace POSH.sys
             Dictionary<string, SortedList<float, POSHPrimitive>> a_actions = (Dictionary<string, SortedList<float, POSHPrimitive>>)behave.attributes[Behaviour.ACTIONS];
             Dictionary<string, SortedList<float, POSHPrimitive>> a_senses = (Dictionary<string, SortedList<float, POSHPrimitive>>)behave.attributes[Behaviour.SENSES];
             string behaviourName = behave.GetName();
-            //string behaviourName = behave.
 
             //    # add the behaviour
             if (_behaviours.ContainsKey(behaviourName))
@@ -113,9 +77,7 @@ namespace POSH.sys
                 {
                     foreach (float version in source[prim.Key].Keys)
                         if (target[prim.Key].ContainsKey(version))
-                            //throw new AttributeException(String.Format(exceptionText, prim.Key, version));
-                            continue;
-                            //MinQ: Because there are some senses shared by multiple actions
+                            throw new AttributeException(String.Format(exceptionText, prim.Key, version));
                         else
                             target[prim.Key][version] = source[prim.Key][version];
                 }
@@ -237,7 +199,7 @@ namespace POSH.sys
             return _senses.Keys.ToArray();
         }
 
-
+        
 
     }
 

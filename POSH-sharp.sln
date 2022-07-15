@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32413.511
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POSH.core", "core\POSH.core.csproj", "{A29EA261-C940-427B-AB72-B27EEFDC15A0}"
 EndProject
@@ -11,10 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POSHBot", "POSHBot\POSHBot.
 	ProjectSection(ProjectDependencies) = postProject
 		{A29EA261-C940-427B-AB72-B27EEFDC15A0} = {A29EA261-C940-427B-AB72-B27EEFDC15A0}
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maah", "Maah\Maah.csproj", "{5880E350-B1C9-4D62-A1FF-A8C092E968E0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{9ECC056E-A2CA-4691-891F-83EFF5954021}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,36 +55,9 @@ Global
 		{0AEEF9C9-D65D-4072-A6C2-352FF8CBDE39}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{0AEEF9C9-D65D-4072-A6C2-352FF8CBDE39}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0AEEF9C9-D65D-4072-A6C2-352FF8CBDE39}.Release|x86.ActiveCfg = Release|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Debug|x86.Build.0 = Debug|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Release|x86.ActiveCfg = Release|Any CPU
-		{5880E350-B1C9-4D62-A1FF-A8C092E968E0}.Release|x86.Build.0 = Release|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Debug|x86.Build.0 = Debug|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|x86.ActiveCfg = Release|Any CPU
-		{9ECC056E-A2CA-4691-891F-83EFF5954021}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {D0B6B93E-3864-42E1-A2FC-E16EEEDA3137}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = POSH-ed\POSH-ed.csproj

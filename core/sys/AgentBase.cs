@@ -97,9 +97,8 @@ namespace POSH.sys
             // profiler= Profiler.initProfile(this); 
 
             // load and register the behaviours, and reflect back onto agent
-            //this._bdict = LoadBehaviours();
-            //ReflectBehaviours();
-            this._bdict = LoadBehavioursFromPlan();
+            this._bdict = LoadBehaviours();
+            ReflectBehaviours();
 
             //# more for the profiler
             // FIXME: PR -- is there another place to do this?  will it succeed without MASON? JJB 1 March 2008
@@ -110,9 +109,9 @@ namespace POSH.sys
             //    pass # normally don't expect profiling, nor necessarily MASON
  
             // assign the initial attributes to the behaviours
-            //this.AssignAttributes(attributes);
+            this.AssignAttributes(attributes);
             
-            // load the plan and behaviour from plan
+            // load the plan
             LoadPlan(plan);
             // loop thread control
             _execLoop = false;
@@ -137,12 +136,6 @@ namespace POSH.sys
                     //            behaviour = behaviour_class(self)            
                     //    else:
                     //        behaviour = behaviour_class(self)  
-            return dict;
-        }
-
-        internal BehaviourDict LoadBehavioursFromPlan()
-        {
-            BehaviourDict dict = AssemblyControl.GetControl().GetBehavioursFromPlan(library,linkedPlanName, this);
             return dict;
         }
 
@@ -276,7 +269,7 @@ namespace POSH.sys
         /// <returns></returns>
         public virtual bool Reset(int waitTime)
         {
-             log.Debug("Resetting the behaviours");
+            log.Debug("Resetting the behaviours");
             if (_bdict.getBehaviours().Length == 0)
             {
             log.Error("No behaviours registered");
@@ -487,7 +480,6 @@ namespace POSH.sys
         public virtual void LoopThread()
         {
             throw new NotImplementedException("AgentBase._loop_thread() needs to be overridden");
-            
         }
 
         /// <summary>

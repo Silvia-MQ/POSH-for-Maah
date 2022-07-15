@@ -10,15 +10,46 @@ using System.IO;
 using System.Text.RegularExpressions;
 using POSH.sys.strict;
 using Posh_sharp.POSHBot.util;
-
+using Newtonsoft.Json;
 
 namespace Posh_sharp.POSHBot
 {
     public class Communicate
     {
         public Socket client;
-        public Dictionary<string,int> Buffer;
 
+        /// <summary>
+        /// freq for behaviours
+        /// </summary>
+        public struct ToJsonMy
+        {
+            public int Reset { get; set; }  //The name of Attributes should match the key in json file
+            public int Forward { get; set; }
+            public int TurnLeft { get; set; }
+            public int TurnRight { get; set; }
+            public int Backwards { get; set; }
+            public int Iddle { get; set; }
+            public int Cuddle { get; set; }
+            public int Mothering { get; set; }
+            public int Escape { get; set; }
+            public int Greeting { get; set; }
+            public int Seperation { get; set; }
+            public int Surprise { get; set; }
+            public int SocialCall { get; set; }
+            public int Caress { get; set; }
+        }
+
+        /// <summary>
+        /// buffer for pet freq
+        /// </summary>
+        public struct JsonPet
+        {
+            public int PetNow { get; set; }
+            public int PetPast { get; set; }
+        }
+
+        public ToJsonMy BehavFreq = new ToJsonMy();
+        public JsonPet PetFreq = new JsonPet();
         /// <summary>
         /// Wrapper for InitTCP
         /// </summary>
@@ -64,33 +95,59 @@ namespace Posh_sharp.POSHBot
         /// The return data from python.
         /// Once Maah finish the behaviour, 'Done' will be sent
         /// </returns>
-        public string SendData(string arg)
+        public bool SendData(string arg)
         {
-            byte[] message = Encoding.ASCII.GetBytes(arg);
+            byte[] message = Encoding.UTF8.GetBytes(arg);
             client.Send(message);
-            Console.WriteLine("Data Sent:" + Encoding.ASCII.GetString(message));
+            Console.WriteLine("Data Sent:" + Encoding.UTF8.GetString(message));
 
             return RevieveData();
         }
 
-        public string RevieveData()
+        /// <summary>
+        /// This function used to recieve data from python
+        /// </summary>
+        /// <returns> True for command executed, false for command fails</returns>
+        public bool RevieveData()
         {
             byte[] receive = new byte[1024];
-            int length = client.Receive(receive);
-            Console.WriteLine("Data Recieved:" + Encoding.ASCII.GetString(receive));
-            return receive.ToString();
+            var length = client.Receive(receive);
+
+            //To check whether received data is matching behaviour freqency struct
+            if (Encoding.UTF8.GetString(receive, 0, length).Contains("Unrecognised"))
+            {
+                Console.WriteLine("{0}", Encoding.UTF8.GetString(receive, 0, length)); // Message should be unrecognised command
+                Array.Clear(receive, 0, length);
+
+                //The behaviour fails
+                return false;
+            }
+            else if (Encoding.UTF8.GetString(receive, 0, length).Contains("PetNow"))
+            {
+                PetFreq = JsonConvert.DeserializeObject<JsonPet>(Encoding.UTF8.GetString(receive, 0, length));
+                Console.WriteLine("command executed");
+
+                return null;
+            }
+            else
+            {
+                BehavFreq = JsonConvert.DeserializeObject<ToJsonMy>(Encoding.UTF8.GetString(receive, 0, length));
+                Console.WriteLine("command executed");
+
+                Array.Clear(receive, 0, length);
+
+                return true;
+            }
+
+            
+
+            
+            //JObject is the objected been serialized by json, in the form of string
+            //messageReceived is the bytes array, msg is the length of bytes array
+
+            
         }
 
-        /// <summary>
-        /// process frequency data from python
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns> returns a dictionary of action and their frequency
-        /// </returns>
-        public Dictionary<string, double> FreqCal(string data)
-        {
-            ///TBC
-        }
 
     }
 
@@ -827,17 +884,44 @@ namespace Posh_sharp.POSHBot
 
         internal int GetFreq(string action)
         {
-            int freq;
             //check the freq of specific action
-            client.Buffer.TryGetValue(action, out freq);
-            return freq;
+            int counts = client.BehavFreq.action;!!!
+            return counts;
         }
+        internal int GetFreq(string a, string b, string c)
+        {
+            //check the freq of specific action
+            int counts = client.BehavFreq.action; !!!
+            return counts;
+        }
+
+        /// <summary>
+        /// Get the freq for petted
+        /// </summary>
+        /// <param name="now"> 
+        /// if true, get the pet state for now,
+        /// otherwise, get the past pet freq</param>
+        /// <returns></returns>
+        internal int GetFreq(bool now)
+        {
+            int counts;
+            //check the freq of specific action
+            if (now is true)
+            {
+                counts = client.PetFreq.PetNow;
+            }
+            else
+            {
+                counts = client.PetFreq.PetPast;
+            }
+                
+            return counts;
+        }
+
 
         public bool Send(string data)
         {
-            string recall = client.SendData(data);
-
-            return (recall == "Done") ? true : false;
+            return client.SendData(data);
         }
 
 		internal bool Stuck()

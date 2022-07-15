@@ -194,7 +194,7 @@ namespace POSH.sys
             foreach(string competence in this.competences.Keys)
             {
                 if (actions.Contains(competence))
-                     throw new NameException(string.Format("Competence name '{0}' clashes with " +
+                    throw new NameException(string.Format("Competence name '{0}' clashes with " +
                         "action of same name", competence));
                 if (senses.Contains(competence))
                     throw new NameException(string.Format("Competence name '{0}' clashes with " +

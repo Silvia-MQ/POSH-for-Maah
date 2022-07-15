@@ -128,16 +128,10 @@ namespace POSH.sys
                     // new agent starts with plan
                     if (PLANMATCHER.IsMatch(line))
                     {
-                        
                         if (plan != string.Empty)
                             agentsInit.Add(new Tuple<string,object>(plan,currentAttributes));
                         // removing the brackets around the plan name
-                        //Console.Out.WriteLine("before put plan {0}",agentsInit.Count);
-                        //Console.ReadKey();
-                        //Console.Out.WriteLine("plan_1 +{0}", plan);
                         plan = line.Substring(1, line.Length - 2);
-                        //Console.Out.WriteLine("plan +{0}",plan);
-                        //Console.ReadKey();
                         currentAttributes = new Dictionary<Tuple<string,string>, object>();
                     }
                     else
@@ -163,7 +157,6 @@ namespace POSH.sys
                     }
                 }
             }
-            
             if (plan != string.Empty)
                 agentsInit.Add(new Tuple<string, object>(plan, currentAttributes));
             if (agentsInit.Count == 0)

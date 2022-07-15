@@ -7,10 +7,9 @@ using System.Reflection;
 using System.IO;
 using POSH.sys.exceptions;
 using System.Threading;
-using POSH.sys.parse;
 
 #if LOG_ON
-using log4net;
+    using log4net;
 #else
     using POSH.sys;
 #endif
@@ -107,8 +106,7 @@ namespace POSH.sys
                 return null;
             if (lib.Split(',').Length > 1)
                 lib = lib.Split(',')[0];
-            //Console.Out.WriteLine(string.Format("{0}", path));
-            //Console.ReadKey();
+
             return (lib != string.Empty && Directory.Exists(path + Path.DirectorySeparatorChar + lib)) ? path + Path.DirectorySeparatorChar + lib : path;
         }
 
@@ -119,8 +117,6 @@ namespace POSH.sys
         /// <returns>The path to the plans</returns>
         private string getPlanPath(string lib)
         {
-            //Console.Out.WriteLine("{0}", getAssemblyLibrary(lib) + Path.DirectorySeparatorChar + config["PlanPath"]);
-            //Console.ReadKey();
             return getAssemblyLibrary(lib)+Path.DirectorySeparatorChar+config["PlanPath"];
             
         }
@@ -147,36 +143,23 @@ namespace POSH.sys
             string planPath=getPlanPath(lib);
             string [] plans={};
             List<string> result=new List<string>();
-            //Console.Out.WriteLine(string.Format("{0}", planPath));
-            //bool a = Directory.Exists(planPath);
-            //Console.Out.WriteLine(string.Format("{0}", a));
-            //Console.ReadKey();
-
-            try
-            {
-                if (Directory.Exists(planPath))
-                {
-                    plans = Directory.GetFiles(planPath, "*.lap", SearchOption.TopDirectoryOnly);
-                }
-                    
+            
+            try{
+                if (File.Exists(planPath))
+                    plans=Directory.GetFiles(planPath,"*.lap",SearchOption.TopDirectoryOnly);
                 int end; 
                 foreach (string plan in plans)
                 {
                     end = plan.ToLower().Contains(".lap") ? plan.ToLower().LastIndexOf(".lap") : 0;
                     result.Add(plan.Remove(end));
-                    //Console.Out.WriteLine(string.Format("{0}", plan.Remove(end)));
-                    
                 }
-            }
+            } 
             catch (IOException)
             {
                 // TODO: @swen: some clever log or comment here!!!
             }
-
-            //Console.ReadKey();
             return result.ToArray();
         }
-
 
         /// <summary>
         /// Returns the plan file name for the given library and plan
@@ -209,7 +192,7 @@ namespace POSH.sys
                 // TODO: @swen: some clever log or comment here!!!
             }
             string planResult = new StreamReader(File.OpenRead(result)).ReadToEnd();
-            //Console.Out.WriteLine("length of plan file {0}", planResult.Length);
+            
             return planResult;
         }
 
@@ -224,12 +207,7 @@ namespace POSH.sys
         /// <returns>If the plan exists (i.e. is a file)</returns>
         public bool isPlan(string lib,string plan)
         {
-            foreach (String filepath in getPlans(lib))
-            {
-                if (filepath.Contains(plan))
-                    return true;
-            }
-            return false;
+            return getPlans(lib).Contains<string>(plan) ? true : false;
         }
 
         /// <summary>
@@ -293,91 +271,6 @@ namespace POSH.sys
 		}
 
         /// <summary>
-        /// get behaviours only from plan file 
-        /// </summary>
-        /// <param name="lib"> library path</param>
-        /// <param name="plan">plan name</param>
-        /// <param name="agent"></param>
-        /// <returns></returns>
-        public virtual BehaviourDict GetBehavioursFromPlan(string lib, string plan, AgentBase agent)
-        {
-            PlanBuilder builder = new LAPParser().Parse(AssemblyControl.GetControl().GetPlanFile(lib, plan));
-            Behaviour behave;
-            BehaviourDict dict = new BehaviourDict();
-
-            ///MinQ find better way to implment these loops-->package!!
-
-            ///Traversal Competence Element , extract behaviour and sense accrodingly
-            ///Foreach Competence Element
-            foreach (KeyValuePair<string, Tuple<string, long, List<object>, List<Tuple<string, List<object>, string, int>[]>>> pair in builder.competences)
-            {
-                //pair.Key == name;
-
-                List<string> _actions = new List<string>(pair.Value.Forth.Count);
-                List<string> _senses = new List<string>();
-                ///foreach action in a competence
-                foreach (Tuple<string, List<object>, string, int>[] sub in pair.Value.Forth)
-                {
-                    
-                    //List<string> _sense = new List<string>(sub[0].Second.Count);
-                    //List<int> _senseValue = new List<int>(sub[0].Second.Count);
-
-                    ///foreach sense element
-                    foreach (Tuple<string, string, string> a in sub[0].Second)
-                    {
-                        _senses.Add(a.First);
-                        //_senseValue.Add(int.Parse(a.Second));
-                    }
-                    //_senses = _sense;
-                    _actions.Add(sub[0].Third);           
-                          
-                }
-                
-                behave = new Behaviour(agent, _actions.ToArray(), _senses.ToArray());
-                behave.suitedPlans = pair.Key;
-                
-                dict.RegisterBehaviourOverride(behave);
-                //Console.Out.WriteLine("Test");
-                //Console.ReadKey(); 
-
-            }
-
-            
-            //List<string> _sense = new List<string>(builder.driveCollection.Forth.Count);
-            /// check each drive collection
-            foreach (Tuple<string, List<object>, string, long>[] p in builder.driveCollection.Forth)
-            {
-                foreach (Tuple<string,string,string> sub in p[0].Second)
-                {
-                    List<string> _sense = new List<string>(builder.driveCollection.Forth.Count);
-                    //List<int> _senseValue = new List<int>(sub[0].Second.Count);
-                    _sense.Add(sub.First);
-
-                    behave = new Behaviour(agent,null, _sense.ToArray());
-                    behave.suitedPlans = p[0].Third;
-                    //Console.Out.WriteLine("behave name {0}", behave.GetName());
-                    //Console.ReadKey();
-                    dict.RegisterBehaviourOverride(behave);
-                }
-            }
-
-            foreach (KeyValuePair<string,Tuple<string,long,List<object>>> p in builder.actionPatterns)
-            {
-                List<string> _actions = new List<string>();  
-                //p.Value.Third[];
-                foreach (string sub in p.Value.Third)
-                {
-                    _actions.Add(sub);
-                    behave = new Behaviour(agent, _actions.ToArray(), null);
-                    behave.suitedPlans = p.Key;
-                }
-            }
-            
-            return (dict.getBehaviours().Count() > 0) ? dict : new BehaviourDict(); //dict;
-
-        }
-
-        /// <summary>
         /// Returns a sequence of classes, containing all behaviour classes that
         /// are available in a particular library.
         /// 
@@ -409,7 +302,7 @@ namespace POSH.sys
             foreach(Type t in a.GetTypes())
                 if (t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(POSH.sys.Behaviour)) && (this.worldScript == null || t.Name != this.worldScript.Second))
                 {
-                    //log.Info(String.Format("Creating instance of behaviour {0}.", t));
+                    log.Info(String.Format("Creating instance of behaviour {0}.", t));
                     ConstructorInfo behaviourConstruct = t.GetConstructor(types);
                     object[] para = new object[1] { agent };
                     log.Debug("Registering behaviour in behaviour dictionary");
@@ -447,7 +340,7 @@ namespace POSH.sys
         public virtual List<Tuple<string, object>> InitAgents(bool verbose, string assembly, string agentLibrary)
         {
             List<Tuple<string, object>> agentsInit = null;
-            string agentsInitFile = string.Format("{0}_{1}", agentLibrary, "init.txt"); //==POSHBot_init.txt
+            string agentsInitFile = string.Format("{0}_{1}", agentLibrary, "init.txt");
 
             // check if the agent init file exists
             if (!CheckAgentInitFile(agentsInitFile))
@@ -617,14 +510,10 @@ namespace POSH.sys
         {
             Module library = null;
             if (!IsAssembly(assembly))
-                //Console.Out.WriteLine("- Flag1");
                 return false;
 
-
             Assembly libAssembly = Assembly.LoadFile(getAssemblyLibrary("") + Path.DirectorySeparatorChar + assembly);
-            //Console.Out.WriteLine("- Flag + {0}",libAssembly);
-            //Console.Out.WriteLine("- Flag2");
-
+            
             try
             {
                 // TODO: include cases for other platforms
@@ -719,7 +608,7 @@ namespace POSH.sys
             return iterate;
         }
 
-        public virtual AgentBase[] CreateAgents(bool verbose, string assembly, List<Tuple<string, object>> agentsInit, Tuple<World, bool> setting) 
+        public virtual AgentBase[] CreateAgents(bool verbose, string assembly, List<Tuple<string, object>> agentsInit, Tuple<World, bool> setting)
         {
             // create the agents
             AgentBase[] agents = null;
@@ -727,7 +616,7 @@ namespace POSH.sys
                 Console.Out.WriteLine("- creating agent(s)");
             try
             {
-                agents = AgentFactory.CreateAgents(assembly, "", agentsInit, setting.First); // setting==<null, false>
+                agents = AgentFactory.CreateAgents(assembly, "", agentsInit, setting.First);
             }
             catch (Exception e)
             {

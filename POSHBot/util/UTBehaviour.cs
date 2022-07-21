@@ -24,15 +24,6 @@ namespace Posh_sharp.POSHBot.util
 			return ((Movement)agent.getBehaviour("Movement"));
         }
 
-        protected Combat GetCombat()
-        {
-			return ((Combat)agent.getBehaviour("Combat"));
-        } 
-
-		protected Navigator GetNavigator()
-		{
-			return ((Navigator)agent.getBehaviour("Navigator"));
-		}
 
         internal virtual void ReceiveFlagDetails(Dictionary<string,string> values)
         {

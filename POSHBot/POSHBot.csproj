@@ -61,9 +61,7 @@
   <ItemGroup>
     <Compile Include="Template.cs" />
     <Compile Include="POSHBot.cs" />
-    <Compile Include="Combat.cs" />
     <Compile Include="Movement.cs" />
-    <Compile Include="Status.cs" />
     <Compile Include="util\CombatInfo.cs" />
     <Compile Include="util\Damage.cs" />
     <Compile Include="util\InvItem.cs" />
@@ -74,7 +72,6 @@
     <Compile Include="util\UTPlayer.cs" />
     <Compile Include="util\Vector3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Navigator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="init\POSHBot_init.txt">

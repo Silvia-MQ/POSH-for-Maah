@@ -1,7 +1,12 @@
 # This version use Socket, and connect to C#, and be controlled by POSH
+
 #Later Imporvement 1: Using sensory input from remote control
+#^ Done. Take OK Button as input
+#Further Imporvement: Multiple input as different meaning
+
 #Later Imporvement 2: Pacakge different funcitons into sepsarate py files
 #                     eg, Socket, Behaviour Functions
+
 import array
 from movement_generator import MovementGenerator
 from time import gmtime, strftime
@@ -17,10 +22,6 @@ import usb.core, usb.util, usb.control
 #remoteLog = open('/home/pi/temp/remote.log','w')
 
 mover = MovementGenerator('all_keypoints.json',0.02,2)
-
-# A ring buffer to store history for last 20 behvaiours
-Behav = RingBuffer(20)
-Pet = RingBuffer(20)
 
 class Socket():
 
@@ -52,9 +53,8 @@ class Socket():
 
     #Recieve data from socket
     def getdata(self):
-        # recieve data  30 Bytes
+        # recieve data for 30 Bytes
         recv_data = s.recv(30).decode(encoding='UTF-8')
-        #recv_data = recv_data.decode('gbk')
 
         print('RECIVED DATA:', recv_data)
 
@@ -69,6 +69,9 @@ class Socket():
 BehavDict = {"Reset":0,"Forward":0,"TurnLeft":0,"TurnRight":0,"Iddle":0,
             "Backwards":0,"Cuddle":0,"Mothering":0,"Escape":0,"Greeting":0,
             "Seperation":0,"Surprise":0,"SocialCall":0,"Caress":0}
+#The dictionary of Peting status
+# Pet Now is either 1 or 0
+# Pet Past is integer
 PetDict = {"PetNow":0,"PetPast":0}
 
 #Functions of behaviours
@@ -142,7 +145,7 @@ def Caress():
 
 # BehavFreq returns a list of counts of each behaviour in memory of 20 behaviours
 
-# Find a better way to calculate the frequencies of each behaviour
+# Possible Imporvement: Find a better way to calculate the frequencies of each behaviour
 # Maybe only update the value of latest and oldest data?
 # ==> in this case, maybe add another parameter of offset for buffer.read(),
 #     in order to read specific latest and oldest data
@@ -150,7 +153,6 @@ def Caress():
 def BehavFreq(Buffer):
 
     freq = BehavDict.copy()
-
 
     # go through the entire ringbuffer everytime
     for i in range(0, Buffer.capacity):
@@ -238,12 +240,20 @@ class Remote():
         return 0
 
 def main():
+    #ring buffers to store history for last 20 behvaiours
+    Behav = RingBuffer(20)
+    Pet = RingBuffer(20)
+
     #instanize a Socket
     Connection = Socket()
     sensor = Remote()
 
     while True:
+        #check for remote input
+        Sense_input = sensor.checkbutton()
+
         #Get the behaviour name to execute from Socket
+        #only send behaviour frequencies and pet status when a command recieved and executed
         command = Connection.getdata()
         if command in BehavDict:
             # execute the behaviour
@@ -259,18 +269,22 @@ def main():
             # change dict into string
             flag_Behav = c.pushdata(json.dumps(B_freq))
             # flag is None if sending succeed
+            if flag_Behav!=None:
+                print("Errors at sending Behaviour data to C#")
+
+            P_freq = PetFreq(Sense_input, Pet)
+
+            # send the pet status
+            # change dict into string
+            flag_Pet = c.pushdata(json.dumps(P_freq))
+            if flag_Pet != None:
+                print("Errors at sending Pet data to C#")
 
         else:
             Connection.pushdata('Unrecognised command')
 
 
         command.clear()
-
-        P_freq = PetFreq(sensor.checkbutton(),Pet)
-
-        PetDict["PetPast"] = 0 = PetFreq(Pet)
-        flag_Pet = c.pushdata(json.dumps(P_freq))
-
 
 
 

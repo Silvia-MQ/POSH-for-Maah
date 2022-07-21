@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Maah": {
-      "commandName": "Project",
-      "commandLineArgs": "-v -p=Maah_6"
-    }
-  }
-}

@@ -31,15 +31,6 @@ namespace Posh_sharp.POSHBot.util
                     case "Id":
                         Id = attributes["Id"].Trim();
                         break;
-                    case "Rotation":
-                        Rotation = Vector3.ConvertToVector3(attributes["Rotation"]);
-                        break;
-                    case "Location":
-                        Location = Vector3.ConvertToVector3(attributes["Location"]);
-                        break;
-                    case "Velocity":
-                        Velocity = POSHBot.CalculateVelocity((attributes["Velocity"]));
-                        break;
                     case "Name":
                         Name = attributes["Name"].Trim();
                         break;

@@ -7,7 +7,7 @@
 (AP ap_idle (minutes 1.0) (
 	idle
 ))
-(C catch_attention (minutes 1.0) (goal ((been_petted 1.0 =) (petted_frequency_past 4.0 >=)))
+(C catch_attention (minutes 1.0) (goal ((been_petted 1.0 =)))
 	(elements
 		(	
 		(forward (trigger ((forward_frq 2.0 <=))) act_forward 2)	)
@@ -23,7 +23,7 @@
 		(separation (trigger ((petted_frequency_past 7.0 >=) (separation_frq 2.0 <=))) act_separation 2)	)
 	)
 )
-(C interact (minutes 1.0) (goal ((been_petted)))
+(C interact (minutes 1.0) (goal ((been_petted 1.0 =)))
 	(elements
 		(	
 		(surprise (trigger ((surprise_frq 2.0 <=))) act_surprise 2)	)
@@ -49,7 +49,7 @@
 		(play (trigger ((been_petted 1.0 =))) interact))
 		(
 
-		(inch (trigger ((petted_frequency_past 3.0 <=))) ap_idle))
+		(inch (trigger ((been_petted 1.0 !=) (petted_frequency_past 3.0 <=))) ap_idle))
 
 	)
 )

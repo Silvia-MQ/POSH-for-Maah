@@ -7,392 +7,118 @@ using POSH.sys.annotations;
 using Posh_sharp.POSHBot.util;
 using POSH.sys.strict;
 
+
+/// <summary>
+/// This file contains all actions and senses of Maah
+/// </summary>
 namespace Posh_sharp.POSHBot
 {
     public class Movement : UTBehaviour
     {
-        internal PositionsInfo info;
-        string pathHomeId;
-        string reachPathHomeId;
-        string pathToEnemyBaseId;
-        string reachPathToEnemyBaseID;
-
         public Movement(AgentBase agent)
             : base(agent,
             new string[] {},
             new string[] {})
         {
-            this.info = new PositionsInfo();
-            pathHomeId = "PathHome";
-            reachPathHomeId = "ReachPathHome";
-            pathToEnemyBaseId = "PathThere";
-            reachPathToEnemyBaseID = "ReachPathThere";
 
         }
 
-
-        /*
-         * 
-         * internal methods
-         * 
-         */
 
         /// <summary>
-        /// updates the flag positions in PositionsInfo
-        /// also updates details of bases, if relevant info sent
-        /// the position of a flag is how we determine where the bases are
+        /// Whether Maah is been petted now
         /// </summary>
-        /// <param name="values">Dictionary containing the Flag details</param>
-        override internal void ReceiveFlagDetails(Dictionary<string, string> values)
-        {
-            // TODO: fix the mix of information in this method it should just contain relevant info
-
-            
-            if (GetBot().info == null || GetBot().info.Count < 1)
-                return;
-            // set flag stuff
-            if (values["Team"] == GetBot().info["Team"])
-            {
-                if (info.ourFlagInfo != null && info.ourFlagInfo.ContainsKey("Location"))
-                    return;
-                info.ourFlagInfo = values;
-            }
-            else
-            {
-                if (info.enemyFlagInfo != null && info.enemyFlagInfo.ContainsKey("Location"))
-                    return;
-                info.enemyFlagInfo = values;
-            }
-
-            if (values["State"] == "home")
-                if (values["Team"] == GetBot().info["Team"])
-                    info.ownBasePos = NavPoint.ConvertToNavPoint(values);
-                else
-                    info.enemyBasePos = NavPoint.ConvertToNavPoint(values);
-        }
-
-        /// <summary>
-        /// if the 'ID' key is PathHome then it tells the bot how to get home.
-        /// we need to turn the dictionary into a list, ordered by key ('0' ... 'n')
-        /// at present other IDs are ignored
-        /// </summary>
-        /// <param name="valuesDict"></param>
-        override internal void ReceivePathDetails(Dictionary<string, string> valuesDict)
-        {
-            if (!valuesDict.ContainsKey("Id"))
-                return;
-            if (valuesDict["Id"] == pathHomeId)
-                info.pathHome = NavPoint.ConvertToPath(valuesDict);
-            else if (valuesDict["Id"] == pathToEnemyBaseId)
-                info.pathToEnemyBase = NavPoint.ConvertToPath(valuesDict);
-
-            // if there's no 0 key we're being given an empty path, so set TooCloseForPath to the current time
-            // so that we can check how old the information is later on
-            if (!valuesDict.ContainsKey("0"))
-                info.TooCloseForPath = TimerBase.CurrentTimeStamp();
-            else
-                info.TooCloseForPath = 0L;
-        }
-
-        /// <summary>
-        /// used in validating the bot's path home or to the enemy flag
-        /// if the thing has the right ID, then clear the relevant path if it's not reachable
-        /// </summary>
-        /// <param name="valuesDict"></param>
-        override internal void ReceiveCheckReachDetails(Dictionary<string, string> valuesDict)
-        {
-            Console.Out.WriteLine("in receive_rch_details");
-
-            if (!valuesDict.ContainsKey("Id"))
-                return;
-
-            if (valuesDict["Id"] == reachPathHomeId && valuesDict["Reachable"] == "False")
-            {
-                info.pathHome.Clear();
-                Console.Out.WriteLine("Cleared PathHome");
-            }
-            else if (valuesDict["Id"] == reachPathToEnemyBaseID && valuesDict["Reachable"] == "False")
-            {
-                info.pathToEnemyBase.Clear();
-                Console.Out.WriteLine("Cleared PathToEnemyBase");
-            }
-        }
-
-        /// <summary>
-        /// clean-up after dying
-        /// </summary>
-        override internal void ReceiveDeathDetails(Dictionary<string, string> value)
-        {
-            info.pathHome.Clear();
-            info.pathToEnemyBase.Clear();
-            info.visitedNavPoints.Clear();
-            info.ourFlagInfo.Clear();
-            info.enemyFlagInfo.Clear();
-        }
-		internal void SendMoveToLocation(Vector3 location)
-		{ 
-			SendMoveToLocation (location, true);
-		}
-        /// <summary>
-        /// if the combatinfo class specifies that we need to remain focused on a player, send a relevant strafe command
-        /// to move to the provided location.  Otherwise, a runto
-        /// </summary>
-        /// <param name="?"></param>
-        /// <param name="performPrevCheck"></param>
-        internal void SendMoveToLocation(Vector3 location, bool performPrevCheck)
-        {
-            // IMPORTANT-TODO: completely remodel this method as it uses stuff from a different behaviour it should not use.
-            Tuple<string, Dictionary<string, string>> message;
-            // expire focus id info if necessary FA
-            
-            if (GetCombat().info.GetFocusId() is Tuple<string, long>)
-            {
-                message = new Tuple<string, Dictionary<string, string>>("MOVE",
-                    new Dictionary<string, string>() 
-                {
-                    {"FirstLocation", location.ToString()},
-                    {"FocusTarget", GetCombat().info.KeepFocusOnID.ToString()}
-                });
-            }
-            else
-            {
-                GetBot().SendMessage("STOPSHOOT", new Dictionary<string, string>());
-                message = new Tuple<string, Dictionary<string, string>>("MOVE",
-                    new Dictionary<string, string>() 
-                {
-                    {"FirstLocation", location.ToString()},
-                });
-            }
-            if (performPrevCheck)
-                GetBot().SendIfNotPreviousMessage(message.First, message.Second);
-            else
-                GetBot().SendMessage(message.First, message.Second);
-
-        }
-
-        private void SendGetPathHome()
-        {
-            if (_debug_)
-                Console.Out.WriteLine("in SendGetPath");
-
-            GetBot().SendIfNotPreviousMessage("GETPATH", new Dictionary<string, string>() 
-                {
-                    // the ID allows us to match requests with answers
-                    {"Location", info.ownBasePos.Location.ToString()}, {"Id", pathHomeId}
-                });
-        }
-        /// <summary>
-        /// returns 1 and sends a runto message for the provided location 
-        /// if the DistanceTolerance check passes otherwise returns 0
-        /// </summary>
-        /// <param name="location"></param>
-        /// <param name="distanceTolerance"></param>
         /// <returns></returns>
-        private bool ToKnownLocation(Dictionary<int, Vector3> location, int distanceTolerance)
-        {
-            if (location.Count == 0)
-                // even though we failed, we return 1 so that it doesn't tail the list
-                return true;
-            if (location[0].Distance2DFrom(Vector3.ConvertToVector3(GetBot().info["Location"]),Vector3.Orientation.XY) > distanceTolerance)
-            {
-                Console.Out.WriteLine("DistanceTolerance check passed");
-                Console.Out.WriteLine("About to send MOVE to");
-                Console.Out.WriteLine(location[0].ToString());
-                Console.Out.WriteLine("Current location");
-                Console.Out.WriteLine(GetBot().info["Location"]);
-
-                SendMoveToLocation(location[0], false);
-                return true;
-            }
-            else
-                return false;
-        }
-
-        ///
-        /// SENSES
-        /// 
-
-
-        private bool atTargetLocation(NavPoint target, int distanceTolerance)
-        {
-            if (!GetBot().info.ContainsKey("Location"))
-                return false;
-            Vector3 location = Vector3.ConvertToVector3(GetBot().info["Location"]);
-
-            if (target == null)
-                return false;
-            else
-            {
-                // this distance may need adjusting in future (we may also wish to consider the Z axis)
-                if (location.DistanceFrom(target.Location) < distanceTolerance)
-                    return true;
-                else
-                    return false;
-            }
-        }
-
         [ExecutableSense("been_petted")]
-        public bool been_petted()
+        public int been_petted()
         {
-            return GetBot().GetFreq(true)==1;
+            return GetBot().GetFreq(true);
         }
 
         [ExecutableSense("forward_frq")]
-        public bool forward_frq()
+        public int forward_frq()
         {
-            return( GetBot().GetFreq("Forward")<2 );
+            return GetBot().GetFreq("Forward");
         }
 
         [ExecutableSense("backward_frq")]
-        public bool backward_frq()
+        public int backward_frq()
         {
-            return (GetBot().GetFreq("Backward") < 2);
+            return GetBot().GetFreq("Backward");
         }
 
-        /// <summary>
-        /// returns 1 if we're near enough to enemy base
-        /// </summary>
         [ExecutableSense("turnleft_frq")]
-		public bool turnleft_frq()
+		public int turnleft_frq()
         {
-            return (GetBot().GetFreq("TurnLeft") < 2);
+            return GetBot().GetFreq("TurnLeft");
         }
 
-        /// <summary>
-        /// returns 1 if we're near enough to our own base
-        /// </summary>
-        /// <returns></returns>
 		[ExecutableSense("turnright_frq")]
-		public bool turnright_frq()
+		public int turnright_frq()
         {
-            return (GetBot().GetFreq("TurnRight") < 2);
+            return GetBot().GetFreq("TurnRight");
         }
 
-        /// <summary>
-        /// returns 1 if we have a location for the enemy base
-        /// </summary>
-        /// <returns></returns>
-        [ExecutableSense("been_petted_past")]
-        public bool been_petted_past()
-        {
-            
-            return (GetBot().GetFreq(false)>1);
-
-        }
-        
-        /// <summary>
-        /// returns 1 if we have a location for our own base
-        /// </summary>
-        /// <returns></returns>
-        [ExecutableSense("KnowOwnBasePos")]
-        public bool KnowOwnBasePos()
-        {
-            return (info.ownBasePos != null) ? true : false;
-        }
 
         /// <summary>
-        /// returns 1 if there's a reachable nav point in the bot's list which we're not already at
+        /// How many times that Maah been petted for last 20 behaviours
         /// </summary>
         /// <returns></returns>
         [ExecutableSense("petted_frequency_past")]
-        public bool petted_frequency_past()
+        public int petted_frequency_past()
         {
-            return (GetBot().GetFreq(false) >= 3);
-            //Minqiu ???
+            return GetBot().GetFreq(false);
         }
 
-        /// <summary>
-        /// not well optimised because it also checks each duplicate
-        /// </summary>
-        /// <param name="navPoints"></param>
-        /// <returns></returns>
-        internal NavPoint GetLeastOftenVisitedNavPoint(List<NavPoint> navPoints)
-        {
 
-            // FIX: corrected mistake in the original implementation which should have faulted the code
-
-            int currentMin = info.visitedNavPoints.Count(g => g == navPoints[0].Id);
-            NavPoint currentMinNP = navPoints[0];
-
-            foreach (NavPoint point in navPoints)
-            {
-                int currentCount = info.visitedNavPoints.Count(g => g == point.Id);
-                if (currentCount < currentMin)
-                {
-                    currentMin = currentCount;
-                    currentMinNP = point;
-                }
-            }
-
-            return currentMinNP;
-        }
-
-        internal NavPoint[] GetReachableNavPoints(NavPoint[] navPoints, int distanceTolerance, Vector3 target)
-        {
-            List<NavPoint> result = new List<NavPoint>();
-
-            foreach (NavPoint currentNP in navPoints)
-                if (currentNP.Reachable && currentNP.Distance2DFrom(target, Vector3.Orientation.XY) > distanceTolerance)
-                    result.Add(currentNP);
-
-            return result.ToArray();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>returns 1 if the enemy flag is specified as reachable</returns>
         [ExecutableSense("greeting_frq")]
-		public bool greeting_frq()
+		public int greeting_frq()
         {
-            int f = GetBot().GetFreq("greeting");
-
-            return false;
+            return GetBot().GetFreq("greeting");
 
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns>returns 1 if our flag is specified as reachable</returns>
 		[ExecutableSense("separation_frq")]
-		public bool separation_frq()
+		public int separation_frq()
         {
-            return (GetBot().GetFreq("Seperation") < 2);
-
+            return GetBot().GetFreq("Seperation");
         }
 
         [ExecutableSense("surprise_frq")]
-        public bool surprise_frq()
+        public int surprise_frq()
         {
-            return (GetBot().GetFreq("Surprise") < 2);
+            return GetBot().GetFreq("Surprise");
         }
 
         [ExecutableSense("cuddle_frq")]
-        public bool cuddle_frq()
+        public int cuddle_frq()
         {
-            return (GetBot().GetFreq("Cuddle") < 2);
+            return GetBot().GetFreq("Cuddle");
         }
+
         [ExecutableSense("mothering_frq")]
-        public bool mothering_frq()
+        public int mothering_frq()
         {
-            return (GetBot().GetFreq("Mothering") < 2);
+            return GetBot().GetFreq("Mothering");
         }
+
         [ExecutableSense("social_call_frq")]
-        public bool social_call_frq()
+        public int social_call_frq()
         {
-            return (GetBot().GetFreq("SocialCall") < 2);
+            return GetBot().GetFreq("SocialCall");
         }
+
         [ExecutableSense("escape_frq")]
-        public bool escape_frq()
+        public int escape_frq()
         {
-            return (GetBot().GetFreq("Escape") < 2);
+            return GetBot().GetFreq("Escape");
         }
+
         [ExecutableSense("caress_frq")]
-        public bool caress_frq()
+        public int caress_frq()
         {
-            return (GetBot().GetFreq("Caress") < 2);
+            return GetBot().GetFreq("Caress");
         }
+
 
 
         ///
@@ -444,70 +170,42 @@ namespace Posh_sharp.POSHBot
             return GetBot().Send("Greeting");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         [ExecutableAction("act_separation")]
         public bool act_separation()
         {
             return GetBot().Send("Seperation");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         [ExecutableAction("act_surprise")]
         public bool act_surprise ()
         {
             return GetBot().Send("Surprise");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         [ExecutableAction("act_cuddle")]
         public bool act_cuddle()
         {
             return GetBot().Send("Cuddle");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         [ExecutableAction("act_mothering")]
         public bool act_mothering()
         {
             return GetBot().Send("Mothering");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         [ExecutableAction("act_social_call")]
         public bool act_social_call()
         {
             return GetBot().Send("SocialCall");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         [ExecutableAction("act_escape")]
         public bool act_escape()
         {
             return GetBot().Send("Escape");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         [ExecutableAction("act_caress")]
         public bool act_caress()
         {

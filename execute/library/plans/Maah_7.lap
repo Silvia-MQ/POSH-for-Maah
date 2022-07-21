@@ -18,12 +18,12 @@
 		(	
 		(turnright (trigger ((turnright_frq 2.0 <=))) act_turnright 2)	)
 		(	
-		(greeting (trigger ((been_patted_past 1.0 =) (petted_frequency_past 2.0 <=) (greeting_frq 2.0 <=))) act_greeting 2)	)
+		(greeting (trigger ((petted_frequency_past 6.0 <=) (greeting_frq 2.0 <=))) act_greeting 2)	)
 		(	
-		(separation (trigger ((been_patted_past 1.0 =) (petted_frequency_past 3.0 >=) (separation_frq 2.0 <=))) act_separation 2)	)
+		(separation (trigger ((petted_frequency_past 7.0 >=) (separation_frq 2.0 <=))) act_separation 2)	)
 	)
 )
-(C interact (minutes 1.0) (goal ((been_patted_past 1.0 =)))
+(C interact (minutes 1.0) (goal ((been_petted 1.0 =)))
 	(elements
 		(	
 		(surprise (trigger ((surprise_frq 2.0 <=))) act_surprise 2)	)
@@ -43,13 +43,13 @@
 	(drives
 		(
 
-		(attention (trigger ((been_petted 1.0 !=))) catch_attention))
+		(attention (trigger ((been_petted 1.0 !=) (petted_frequency_past 4.0 >=))) catch_attention))
 		(
 
 		(play (trigger ((been_petted 1.0 =))) interact))
 		(
 
-		(inch (trigger ((no_attention 1.0 =))) ap_idle))
+		(inch (trigger ((been_petted 1.0 !=) (petted_frequency_past 3.0 <=))) ap_idle))
 
 	)
 )
